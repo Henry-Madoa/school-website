@@ -15,7 +15,7 @@ export function EventFields({ event }: { event?: EventView }) {
 
         <div className="field">
           <label htmlFor="summary">One-line summary</label>
-          <input id="summary" name="summary" type="text" maxLength={300} defaultValue={event?.summary ?? ''} placeholder="Walk the campus while the school is working." />
+          <input id="summary" name="summary" type="text" maxLength={300} defaultValue={event?.summary ?? ''} placeholder="Walk around the school while it is working." />
           <p className="help">Shown in the calendar list and in the diary on the home page.</p>
         </div>
 

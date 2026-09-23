@@ -5,6 +5,8 @@ import { inboxSummary, listEnquiries, listApplications } from '@/lib/inbox.ts';
 import { adminPosts, adminEvents } from '@/lib/content.ts';
 import { getSettings } from '@/lib/site.ts';
 import { formatDateShort, relativeDays, truncate } from '@/lib/format.ts';
+import { parseRange } from '@/lib/insights.ts';
+import { Insights } from './insights.tsx';
 
 /*
  * The dashboard.
@@ -16,8 +18,8 @@ import { formatDateShort, relativeDays, truncate } from '@/lib/format.ts';
 
 export const metadata = { title: 'Dashboard' };
 
-export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ denied?: string }> }) {
-  const [user, { denied }] = await Promise.all([requireUser(), searchParams]);
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ denied?: string; range?: string }> }) {
+  const [user, { denied, range }] = await Promise.all([requireUser(), searchParams]);
   const school = await getSettings();
 
   const mayEnquiries = canNav(user, 'ENQUIRIES');
@@ -36,7 +38,10 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
 
   const now = new Date().toISOString();
   const drafts = posts.filter((post) => !post.is_published);
-  const upcoming = events.filter((event) => event.is_published && event.starts_at >= now).slice(0, 5);
+  // adminEvents() is newest-first; the diary wants the soonest first.
+  const upcoming = events
+    .filter((event) => event.is_published && event.starts_at >= now)
+    .sort((a, b) => a.starts_at.localeCompare(b.starts_at));
   const deniedPage = denied ? pageByCode(denied) : null;
 
   return (
@@ -114,6 +119,8 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
           ) : null}
         </div>
       ) : null}
+
+      <Insights user={user} range={parseRange(range)} upcoming={upcoming} />
 
       <div className="grid-side">
         <div style={{ display: 'grid', gap: 20 }}>
@@ -233,7 +240,7 @@ export default async function DashboardPage({ searchParams }: { searchParams: Pr
               <header><h2>Next in the diary</h2></header>
               <div className="body">
                 <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'grid', gap: 12 }}>
-                  {upcoming.map((event) => (
+                  {upcoming.slice(0, 5).map((event) => (
                     <li key={event.id} style={{ fontSize: '0.84rem' }}>
                       <Link href={`/admin/events/${event.id}`} style={{ fontWeight: 650, textDecoration: 'none', color: 'var(--ink)' }}>
                         {event.title}

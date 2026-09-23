@@ -151,7 +151,7 @@ export default async function StudentLifePage() {
             <div className="eyebrow">Come and look</div>
             <h2>The best way to know is to visit</h2>
             <p className="lead" style={{ marginInline: 'auto' }}>
-              Walk the campus on an ordinary working day, with lessons running and the playground full.
+              Walk around the school on an ordinary working day, with lessons running and the playground full.
             </p>
           </div>
           <div className="btn-row" style={{ justifyContent: 'center' }}>

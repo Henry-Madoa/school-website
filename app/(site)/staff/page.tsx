@@ -96,7 +96,7 @@ export default async function StaffPage() {
             <h3>Safeguarding</h3>
             <p className="small" style={{ margin: 0 }}>
               Every member of staff is vetted before appointment, including a certificate of good conduct, and every
-              appointment is confirmed by the board. Visitors are signed in at the gate and accompanied on the campus.
+              appointment is confirmed by the board. Visitors are signed in at the gate and accompanied around the school.
             </p>
           </div>
         </div>

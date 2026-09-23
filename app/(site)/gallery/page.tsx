@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const school = await getSettings();
   return {
     title: 'Photo gallery',
-    description: `Life at ${school.name}: the campus, sports day, the music and drama festival, and a term in photographs.`,
+    description: `Life at ${school.name}: the school grounds, sports day, the music and drama festival, and a term in photographs.`,
     alternates: { canonical: '/gallery' },
   };
 }
@@ -26,7 +26,7 @@ export default async function GalleryPage() {
           <h1>Photo gallery</h1>
           <p className="lead">
             {total ? `${total} photographs across ${albums.length} album${albums.length === 1 ? '' : 's'} — ` : ''}
-            the campus, the classrooms, the fields and the days that are worth remembering.
+            the school grounds, the classrooms, the fields and the days that are worth remembering.
           </p>
         </div>
       </div>

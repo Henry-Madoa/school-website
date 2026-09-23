@@ -9,7 +9,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const school = await getSettings();
   return {
     title: `About ${school.short_name ?? school.name}`,
-    description: school.about_intro ?? 'Who we are, what we believe, how the school is governed and registered, and what is on the campus.',
+    description: school.about_intro ?? 'Who we are, what we believe, how the school is governed and registered, and what our facilities offer.',
     alternates: { canonical: '/about' },
   };
 }
@@ -73,7 +73,7 @@ export default async function AboutPage() {
             <h3 style={{ marginTop: 28 }}>Safeguarding</h3>
             <p className="small">
               Every member of staff is vetted before appointment. Visitors sign in at the gate and are accompanied on the
-              campus. Children are released only to a parent or a named adult, and the school bus follows the same rule at
+              school grounds. Children are released only to a parent or a named adult, and the school bus follows the same rule at
               every stop. Our safeguarding and anti-bullying policies are available from the office, and any concern can be
               raised directly with the Principal.
             </p>
@@ -82,7 +82,7 @@ export default async function AboutPage() {
           <aside>
             {cover ? (
               <div style={{ borderRadius: 'var(--r-lg)', overflow: 'hidden', marginBottom: 20 }}>
-                <img src={cdn(cover, { width: 800, height: 600 })} alt={`The ${school.name} campus`} style={{ width: '100%', display: 'block' }} loading="lazy" />
+                <img src={cdn(cover, { width: 800, height: 600 })} alt={`Inside ${school.name}`} style={{ width: '100%', display: 'block' }} loading="lazy" />
               </div>
             ) : null}
 
@@ -150,7 +150,7 @@ export default async function AboutPage() {
       <section className="section">
         <div className="wrap">
           <div className="section-head center">
-            <div className="eyebrow">The campus</div>
+            <div className="eyebrow">Our facilities</div>
             <h2>Everything a school this size needs, and nothing it does not</h2>
           </div>
           <div className="grid g4">

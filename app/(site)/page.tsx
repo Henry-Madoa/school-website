@@ -155,7 +155,7 @@ export default async function HomePage() {
               ['👩🏾‍🏫', 'Teachers who stay', `${school.stat_teachers || 'Qualified'} TSC-registered teachers across ${levels.length} levels, with subject specialists from Grade 4 upwards.`],
               ['📊', 'Reporting you can see', 'Continuous assessment, competency bands and a report card published to you online at the end of every term.'],
               ['🚌', `${routes.length} bus routes`, `Named stops and published times, on routes the transport office actually works to.`],
-              ['🏫', 'A campus built for it', 'Laboratories, a library, playing fields, a dining hall and a staffed sick bay — everything a school this size needs.'],
+              ['🏫', 'Facilities built for it', 'Laboratories, a library, playing fields, a dining hall and a staffed sick bay — everything a school this size needs.'],
             ].map(([icon, title, body], index) => (
               <Reveal key={title} delay={index * 70}>
                 <div className="card icon-tile" style={{ height: '100%' }}>
@@ -339,7 +339,7 @@ export default async function HomePage() {
               <div className="step">
                 <div>
                   <h3>Enquire, or come and see us</h3>
-                  <p>Send the form beside this, call the office, or book a tour and walk the campus while the school is working.</p>
+                  <p>Send the form beside this, call the office, or book a tour and walk around the school while it is working.</p>
                 </div>
               </div>
               <div className="step">

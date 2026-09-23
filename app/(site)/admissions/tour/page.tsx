@@ -6,7 +6,7 @@ import { EnquiryForm } from '../../forms.tsx';
 
 export const metadata: Metadata = {
   title: 'Book a school visit',
-  description: 'Come and see the school while it is working. Book a visit and walk the campus with a member of the admissions team.',
+  description: 'Come and see the school while it is working. Book a visit and walk around the school with a member of the admissions team.',
   alternates: { canonical: '/admissions/tour' },
 };
 
