@@ -32,8 +32,12 @@ import type { ActionResult } from '@/lib/types.ts';
 const text = (form: FormData, key: string): string => String(form.get(key) ?? '');
 const id = (form: FormData, key = 'id'): number => Number(form.get(key) ?? 0);
 
-/** After a content change, the admin list the editor is looking at should be right too. */
-const refresh = (...paths: string[]): void => { for (const path of paths) revalidatePath(path); };
+/*
+ * The public pages are prerendered, and nearly all of them show content from more than one table
+ * (the layout reads the settings row, the home page shows news, events and testimonials). So any
+ * change refreshes the whole site, admin included, rather than guessing which pages it touches.
+ */
+const refresh = (): void => revalidatePath('/', 'layout');
 
 /* ========================================================================== news */
 
@@ -58,11 +62,11 @@ export async function savePost(_prev: unknown, form: FormData): Promise<ActionRe
 
     if (editing) {
       await content.updatePost(editing, input, actor);
-      refresh('/admin/news', `/admin/news/${editing}`);
+      refresh();
       return { id: editing };
     }
     const created = await content.createPost(input, actor);
-    refresh('/admin/news');
+    refresh();
     return { id: created };
   });
 }
@@ -71,7 +75,7 @@ export async function deletePost(_prev: unknown, form: FormData): Promise<Action
   return actionResult(async () => {
     const actor = await requireAction('NEWS_DELETE');
     await content.deletePost(id(form), actor);
-    refresh('/admin/news');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -81,7 +85,7 @@ export async function togglePost(_prev: unknown, form: FormData): Promise<Action
     const actor = await requireAction('NEWS_UPDATE');
     const field = text(form, 'field') === 'is_pinned' ? 'is_pinned' : 'is_published';
     await content.togglePost(id(form), field, actor);
-    refresh('/admin/news');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -111,11 +115,11 @@ export async function saveEvent(_prev: unknown, form: FormData): Promise<ActionR
 
     if (editing) {
       await content.updateEvent(editing, input, actor);
-      refresh('/admin/events', `/admin/events/${editing}`);
+      refresh();
       return { id: editing };
     }
     const created = await content.createEvent(input, actor);
-    refresh('/admin/events');
+    refresh();
     return { id: created };
   });
 }
@@ -124,7 +128,7 @@ export async function deleteEvent(_prev: unknown, form: FormData): Promise<Actio
   return actionResult(async () => {
     const actor = await requireAction('EVENTS_DELETE');
     await content.deleteEvent(id(form), actor);
-    refresh('/admin/events');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -134,7 +138,7 @@ export async function toggleEvent(_prev: unknown, form: FormData): Promise<Actio
     const actor = await requireAction('EVENTS_UPDATE');
     const field = text(form, 'field') === 'rsvp_enabled' ? 'rsvp_enabled' : 'is_published';
     await content.toggleEvent(id(form), field, actor);
-    refresh('/admin/events');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -143,7 +147,7 @@ export async function deleteRsvp(_prev: unknown, form: FormData): Promise<Action
   return actionResult(async () => {
     const actor = await requireAction('EVENTS_RSVP_DELETE');
     await inbox.deleteRsvp(id(form), actor);
-    refresh('/admin/events/bookings');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -167,11 +171,11 @@ export async function saveAlbum(_prev: unknown, form: FormData): Promise<ActionR
 
     if (editing) {
       await content.updateAlbum(editing, input, actor);
-      refresh('/admin/gallery', `/admin/gallery/${editing}`);
+      refresh();
       return { id: editing };
     }
     const created = await content.createAlbum(input, actor);
-    refresh('/admin/gallery');
+    refresh();
     return { id: created };
   });
 }
@@ -180,7 +184,7 @@ export async function deleteAlbum(_prev: unknown, form: FormData): Promise<Actio
   return actionResult(async () => {
     const actor = await requireAction('GALLERY_DELETE');
     await content.deleteAlbum(id(form), actor);
-    refresh('/admin/gallery');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -193,7 +197,7 @@ export async function addPhotos(_prev: unknown, form: FormData): Promise<ActionR
     const uploaded = await uploadImages(form.getAll('photos'), 'gallery');
     const caption = text(form, 'caption') || null;
     const added = await content.addPhotos(albumId, uploaded.map((image) => ({ url: image.url, caption })), actor);
-    refresh('/admin/gallery', `/admin/gallery/${albumId}`);
+    refresh();
     return { added };
   });
 }
@@ -201,8 +205,8 @@ export async function addPhotos(_prev: unknown, form: FormData): Promise<ActionR
 export async function deletePhoto(_prev: unknown, form: FormData): Promise<ActionResult<{ ok: true }>> {
   return actionResult(async () => {
     const actor = await requireAction('GALLERY_PHOTO_DELETE');
-    const albumId = await content.deletePhoto(id(form), actor);
-    refresh('/admin/gallery', `/admin/gallery/${albumId}`);
+    await content.deletePhoto(id(form), actor);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -211,7 +215,7 @@ export async function setPhotoCaption(_prev: unknown, form: FormData): Promise<A
   return actionResult(async () => {
     const actor = await requireAction('GALLERY_PHOTO_UPDATE');
     await content.setPhotoCaption(id(form), form.get('caption'), actor);
-    refresh('/admin/gallery');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -238,11 +242,11 @@ export async function saveStaff(_prev: unknown, form: FormData): Promise<ActionR
 
     if (editing) {
       await content.updateStaff(editing, input, actor);
-      refresh('/admin/people', `/admin/people/${editing}`);
+      refresh();
       return { id: editing };
     }
     const created = await content.createStaff(input, actor);
-    refresh('/admin/people');
+    refresh();
     return { id: created };
   });
 }
@@ -251,7 +255,7 @@ export async function deleteStaff(_prev: unknown, form: FormData): Promise<Actio
   return actionResult(async () => {
     const actor = await requireAction('PEOPLE_DELETE');
     await content.deleteStaff(id(form), actor);
-    refresh('/admin/people');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -273,7 +277,7 @@ export async function saveTestimonial(_prev: unknown, form: FormData): Promise<A
       isPublished: form.get('is_published'),
       photoUrl: uploaded?.url ?? null,
     }, actor);
-    refresh('/admin/testimonials');
+    refresh();
     return { id: created };
   });
 }
@@ -282,7 +286,7 @@ export async function deleteTestimonial(_prev: unknown, form: FormData): Promise
   return actionResult(async () => {
     const actor = await requireAction('TESTIMONIALS_DELETE');
     await content.deleteTestimonial(id(form), actor);
-    refresh('/admin/testimonials');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -300,7 +304,7 @@ export async function saveFaq(_prev: unknown, form: FormData): Promise<ActionRes
       sort: form.get('sort'),
       isPublished: form.get('is_published'),
     }, actor);
-    refresh('/admin/faqs');
+    refresh();
     return { id: created };
   });
 }
@@ -309,7 +313,7 @@ export async function deleteFaq(_prev: unknown, form: FormData): Promise<ActionR
   return actionResult(async () => {
     const actor = await requireAction('FAQS_DELETE');
     await content.deleteFaq(id(form), actor);
-    refresh('/admin/faqs');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -331,7 +335,7 @@ export async function saveLevel(_prev: unknown, form: FormData): Promise<ActionR
       isPublished: form.get('is_published'),
       imageUrl: uploaded?.url ?? null,
     }, actor);
-    refresh('/admin/academics', `/admin/academics/${saved}`);
+    refresh();
     return { id: saved };
   });
 }
@@ -340,7 +344,7 @@ export async function deleteLevel(_prev: unknown, form: FormData): Promise<Actio
   return actionResult(async () => {
     const actor = await requireAction('ACADEMICS_MANAGE');
     await content.deleteLevel(id(form), actor);
-    refresh('/admin/academics');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -350,7 +354,7 @@ export async function addGrade(_prev: unknown, form: FormData): Promise<ActionRe
     const actor = await requireAction('ACADEMICS_MANAGE');
     const levelId = id(form, 'level_id');
     await content.addGrade(levelId, form.get('name'), form.get('sort'), actor);
-    refresh('/admin/academics', `/admin/academics/${levelId}`);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -359,7 +363,7 @@ export async function deleteGrade(_prev: unknown, form: FormData): Promise<Actio
   return actionResult(async () => {
     const actor = await requireAction('ACADEMICS_MANAGE');
     await content.deleteGrade(id(form), actor);
-    refresh('/admin/academics', `/admin/academics/${id(form, 'level_id')}`);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -369,7 +373,7 @@ export async function addSubject(_prev: unknown, form: FormData): Promise<Action
     const actor = await requireAction('ACADEMICS_MANAGE');
     const levelId = id(form, 'level_id');
     await content.addSubject(levelId, form.get('name'), form.get('is_core'), actor);
-    refresh('/admin/academics', `/admin/academics/${levelId}`);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -378,7 +382,7 @@ export async function deleteSubject(_prev: unknown, form: FormData): Promise<Act
   return actionResult(async () => {
     const actor = await requireAction('ACADEMICS_MANAGE');
     await content.deleteSubject(id(form), actor);
-    refresh('/admin/academics', `/admin/academics/${id(form, 'level_id')}`);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -396,7 +400,7 @@ export async function saveTerm(_prev: unknown, form: FormData): Promise<ActionRe
       isCurrent: form.get('is_current'),
       note: form.get('note'),
     }, actor);
-    refresh('/admin/academics/terms');
+    refresh();
     return { id: saved };
   });
 }
@@ -405,7 +409,7 @@ export async function deleteTerm(_prev: unknown, form: FormData): Promise<Action
   return actionResult(async () => {
     const actor = await requireAction('TERMS_MANAGE');
     await content.deleteTerm(id(form), actor);
-    refresh('/admin/academics/terms');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -423,7 +427,7 @@ export async function saveFee(_prev: unknown, form: FormData): Promise<ActionRes
       appliesTo: form.get('applies_to'),
       sort: form.get('sort'),
     }, actor);
-    refresh('/admin/academics/fees');
+    refresh();
     return { id: saved };
   });
 }
@@ -432,7 +436,7 @@ export async function deleteFee(_prev: unknown, form: FormData): Promise<ActionR
   return actionResult(async () => {
     const actor = await requireAction('FEES_MANAGE');
     await content.deleteFee(id(form), actor);
-    refresh('/admin/academics/fees');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -441,7 +445,7 @@ export async function copyFees(_prev: unknown, form: FormData): Promise<ActionRe
   return actionResult(async () => {
     const actor = await requireAction('FEES_MANAGE');
     const lines = await content.copyFees(Number(form.get('from_term')), Number(form.get('to_term')), actor);
-    refresh('/admin/academics/fees');
+    refresh();
     return { lines };
   });
 }
@@ -459,7 +463,7 @@ export async function saveRoute(_prev: unknown, form: FormData): Promise<ActionR
       sort: form.get('sort'),
       isPublished: form.get('is_published'),
     }, actor);
-    refresh('/admin/transport', `/admin/transport/${saved}`);
+    refresh();
     return { id: saved };
   });
 }
@@ -468,7 +472,7 @@ export async function deleteRoute(_prev: unknown, form: FormData): Promise<Actio
   return actionResult(async () => {
     const actor = await requireAction('TRANSPORT_MANAGE');
     await content.deleteRoute(id(form), actor);
-    refresh('/admin/transport');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -483,7 +487,7 @@ export async function saveStop(_prev: unknown, form: FormData): Promise<ActionRe
       dropoff: form.get('dropoff_time'),
       sort: form.get('sort'),
     }, actor);
-    refresh('/admin/transport', `/admin/transport/${routeId}`);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -492,7 +496,7 @@ export async function deleteStop(_prev: unknown, form: FormData): Promise<Action
   return actionResult(async () => {
     const actor = await requireAction('TRANSPORT_MANAGE');
     await content.deleteStop(id(form), actor);
-    refresh('/admin/transport', `/admin/transport/${id(form, 'route_id')}`);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -520,7 +524,7 @@ export async function saveSettings(_prev: unknown, form: FormData): Promise<Acti
       ...(logo ? { logo_url: logo.url } : {}),
       ...(hero ? { hero_image_url: hero.url } : {}),
     });
-    refresh('/admin/settings', '/admin');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -531,7 +535,7 @@ export async function setEnquiryStatus(_prev: unknown, form: FormData): Promise<
   return actionResult(async () => {
     const actor = await requireAction('ENQUIRIES_UPDATE');
     await inbox.setEnquiryStatus(id(form), form.get('status'), form.get('notes'), actor);
-    refresh('/admin/enquiries', `/admin/enquiries/${id(form)}`);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -540,7 +544,7 @@ export async function deleteEnquiry(_prev: unknown, form: FormData): Promise<Act
   return actionResult(async () => {
     const actor = await requireAction('ENQUIRIES_DELETE');
     await inbox.deleteEnquiry(id(form), actor);
-    refresh('/admin/enquiries');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -549,7 +553,7 @@ export async function setApplicationStatus(_prev: unknown, form: FormData): Prom
   return actionResult(async () => {
     const actor = await requireAction('APPLICATIONS_UPDATE');
     await inbox.setApplicationStatus(id(form), form.get('status'), form.get('notes'), actor);
-    refresh('/admin/applications', `/admin/applications/${id(form)}`);
+    refresh();
     return { ok: true as const };
   });
 }
@@ -558,7 +562,7 @@ export async function deleteApplication(_prev: unknown, form: FormData): Promise
   return actionResult(async () => {
     const actor = await requireAction('APPLICATIONS_DELETE');
     await inbox.deleteApplication(id(form), actor);
-    refresh('/admin/applications');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -567,7 +571,7 @@ export async function setSubscriberStatus(_prev: unknown, form: FormData): Promi
   return actionResult(async () => {
     const actor = await requireAction('SUBSCRIBERS_UPDATE');
     await inbox.setSubscriberStatus(id(form), text(form, 'status') === 'ACTIVE' ? 'ACTIVE' : 'UNSUBSCRIBED', actor);
-    refresh('/admin/subscribers');
+    refresh();
     return { ok: true as const };
   });
 }
@@ -576,7 +580,7 @@ export async function deleteSubscriber(_prev: unknown, form: FormData): Promise<
   return actionResult(async () => {
     const actor = await requireAction('SUBSCRIBERS_DELETE');
     await inbox.deleteSubscriber(id(form), actor);
-    refresh('/admin/subscribers');
+    refresh();
     return { ok: true as const };
   });
 }
