@@ -27,7 +27,7 @@ export interface NavGroup {
   items: NavItem[];
 }
 
-export function SiteNav({ groups, portalUrl, portalLabel }: { groups: NavGroup[]; portalUrl: string; portalLabel: string }) {
+export function SiteNav({ groups, portalUrl, portalLabel }: { groups: NavGroup[]; portalUrl: string | null; portalLabel: string }) {
   const pathname = usePathname();
   const [drawer, setDrawer] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
@@ -116,9 +116,13 @@ export function SiteNav({ groups, portalUrl, portalLabel }: { groups: NavGroup[]
 
         <div className="nav-cta">
           <Link href="/admissions/apply" className="btn btn-sm btn-ghost">Apply online</Link>
-          <a href={portalUrl} className="btn btn-sm btn-primary" target={portalUrl.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
-            {portalLabel}
-          </a>
+          {portalUrl ? (
+            <a href={portalUrl} className="btn btn-sm btn-primary" target={portalUrl.startsWith('http') ? '_blank' : undefined} rel="noreferrer">
+              {portalLabel}
+            </a>
+          ) : (
+            <Link href="/admissions/tour" className="btn btn-sm btn-primary">Book a visit</Link>
+          )}
         </div>
       </nav>
     </div>

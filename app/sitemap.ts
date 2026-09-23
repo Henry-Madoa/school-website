@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { siteUrl } from '@/lib/urls.ts';
 import { getLevels, getPosts, getUpcomingEvents, getPastEvents, getAlbums } from '@/lib/site.ts';
 
 /*
@@ -8,7 +9,7 @@ import { getLevels, getPosts, getUpcomingEvents, getPastEvents, getAlbums } from
  * The admin is not here, and it is disallowed in robots.ts.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+  const base = siteUrl();
   const url = (path: string) => `${base}${path}`;
 
   const [levels, posts, upcoming, past, albums] = await Promise.all([

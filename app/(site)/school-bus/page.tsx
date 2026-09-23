@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getRoutes, getGrades, getFaqs } from '@/lib/site.ts';
+import { portalUrl } from '@/lib/urls.ts';
 import { formatMoney } from '@/lib/format.ts';
 import { EnquiryForm } from '../forms.tsx';
 
@@ -15,7 +16,7 @@ export default async function TransportPage() {
     getSettings(), getRoutes(), getGrades(), getFaqs('TRANSPORT'),
   ]);
   const stops = routes.reduce((count, route) => count + route.stops.length, 0);
-  const portal = school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal';
+  const portal = portalUrl(school);
 
   return (
     <>
@@ -81,7 +82,7 @@ export default async function TransportPage() {
               <li>Buses are insured and inspected, and the office is told before a bus goes out and when it returns.</li>
               <li>Morning-only or evening-only travel is possible where a family needs it.</li>
               <li>To join a route, tell the office — the fare is added to the next term&rsquo;s invoice automatically.</li>
-              <li>A parent signed in to the <a href={portal}>portal</a> can see their child&rsquo;s route, stop and times at any moment.</li>
+              {portal ? <li>A parent signed in to the <a href={portal}>portal</a> can see their child&rsquo;s route, stop and times at any moment.</li> : null}
             </ul>
 
             {faqs.length ? (

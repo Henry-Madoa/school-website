@@ -5,26 +5,20 @@ import { cdn } from '@/lib/cloudinary.ts';
 
 export const metadata: Metadata = {
   title: 'Student life',
-  description: 'A day at the school: clubs, sport, music and drama, boarding life, the library, the school bus, and how we look after children’s wellbeing.',
+  description: 'A week at the school: CBC lessons, computer and French classes, clubs and societies, school trips, transport and Christian values.',
   alternates: { canonical: '/student-life' },
 };
 
-const DAY: [time: string, day: string, boarder: string | null][] = [
-  ['6.00 – 7.00', 'Bus pick-up along the route', 'Wake-up, dormitory duties, breakfast'],
-  ['7.20', 'Assembly — notices, a reading, the day’s business', null],
-  ['7.40 – 10.20', 'Lessons', null],
-  ['10.20 – 10.50', 'Break and a snack', null],
-  ['10.50 – 12.50', 'Lessons', null],
-  ['12.50 – 14.00', 'Lunch in the dining hall, then free play', null],
-  ['14.00 – 15.40', 'Lessons and practicals', null],
-  ['15.40 – 16.40', 'Clubs, games, then the bus home', 'Games and clubs'],
-  ['17.00 – 19.30', 'At home', 'Supper, then supervised prep'],
-  ['20.00', '—', 'Dormitories, lights out by house'],
+const WEEK: [title: string, body: string][] = [
+  ['Lessons', 'The Competency Based Curriculum, taught in spacious, naturally-lit classrooms with a small teacher-to-pupil ratio.'],
+  ['Computer classes', 'A centre of digital literacy: every pupil learns to use a computer as part of the school week.'],
+  ['French', 'A foreign language alongside English and Kiswahili.'],
+  ['Clubs and societies', 'Scouts, Music, Poetry and Drama, among others.'],
+  ['Learning beyond the classroom', 'Academic tours that bring lessons to life — most recently to Amboseli National Park.'],
 ];
 
 export default async function StudentLifePage() {
   const [school, routes, albums] = await Promise.all([getSettings(), getRoutes(), getAlbums()]);
-  const portal = school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal';
   const photos = albums.flatMap((album) => album.photos.map((photo) => ({ ...photo, album: album.slug }))).slice(0, 4);
 
   return (
@@ -34,8 +28,7 @@ export default async function StudentLifePage() {
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Student life</div>
           <h1>Student life</h1>
           <p className="lead">
-            School is where children spend most of their waking hours. What happens between the lessons matters as much
-            as the lessons.
+            A holistic education: what happens between the lessons matters as much as the lessons themselves.
           </p>
         </div>
       </div>
@@ -44,46 +37,36 @@ export default async function StudentLifePage() {
         <div className="wrap split">
           <div>
             <div className="eyebrow">The shape of it</div>
-            <h2>A day here</h2>
+            <h2>What a week holds</h2>
             <div className="table-scroll">
               <table className="data">
-                <thead><tr><th style={{ width: '22%' }}>Time</th><th>Day scholar</th><th>Boarder</th></tr></thead>
                 <tbody>
-                  {DAY.map(([time, day, boarder]) => (
-                    <tr key={time}>
-                      <td className="nowrap">{time}</td>
-                      {boarder === null
-                        ? <td colSpan={2}>{day}</td>
-                        : <><td>{day}</td><td>{boarder}</td></>}
+                  {WEEK.map(([title, body]) => (
+                    <tr key={title}>
+                      <td className="nowrap" style={{ width: '32%' }}><strong>{title}</strong></td>
+                      <td>{body}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
-            <p className="tiny muted">Times shift a little for Pre-Primary, whose day ends after lunch.</p>
+            <p className="tiny muted">
+              School runs Monday to Friday. {school.office_hours ? `The office is open ${school.office_hours.replace(/^Monday to Friday,\s*/i, '')}.` : ''}
+            </p>
           </div>
 
           <aside>
             <div className="callout">
               <h3>Clubs &amp; societies</h3>
               <p className="small" style={{ margin: 0 }}>
-                Every pupil joins at least one{school.stat_clubs ? ` of ${school.stat_clubs}` : ''}: debate, drama,
-                music, scouts, journalism, coding, chess, environment club and the school choir. Clubs run in the last
-                period of the day, so no child is left out because of the bus.
-              </p>
-            </div>
-            <div className="callout" style={{ marginTop: 16 }}>
-              <h3>Sport</h3>
-              <p className="small" style={{ margin: 0 }}>
-                Football, netball, athletics, volleyball and swimming — taught in curriculum time and played
-                competitively against other schools each term.
+                Scouts, Music, Poetry and Drama, among others{school.stat_clubs ? ` — ${school.stat_clubs} in all` : ''}.
               </p>
             </div>
             <div className="callout callout-accent" style={{ marginTop: 16 }}>
-              <h3>Wellbeing</h3>
+              <h3>Christian values</h3>
               <p className="small" style={{ margin: 0 }}>
-                A counsellor available to any child who asks, a staffed sick bay, and a clear anti-bullying policy that
-                staff are trained to act on. Parents are contacted the same day about anything that matters.
+                {school.name} is founded on strong Christian principles. We mould children with Christ-like values,
+                and we honour God through excellence.
               </p>
             </div>
           </aside>
@@ -94,29 +77,23 @@ export default async function StudentLifePage() {
         <div className="wrap">
           <div className="grid g3">
             <div className="card icon-tile">
-              <span className="icon" aria-hidden="true">🛏</span>
-              <h3>Boarding</h3>
-              <p>
-                Houses with resident wardens, from Grade 4 upwards. Supervised prep every evening, weekend activities,
-                and visiting days published at the start of each term. Boarders keep the same teachers and the same
-                timetable as everyone else — boarding adds structure, not a different school.
-              </p>
+              <span className="icon" aria-hidden="true">💻</span>
+              <h3>Digital literacy</h3>
+              <p>Computer classes are part of every pupil&rsquo;s week, so children grow up confident with technology.</p>
             </div>
             <div className="card icon-tile">
-              <span className="icon" aria-hidden="true">📚</span>
-              <h3>Library</h3>
-              <p>
-                Catalogued copy by copy, staffed from 7 am for the children who come on the first bus. Pupils borrow two
-                books at a time for two weeks, and a parent can see what their child has out from the{' '}
-                <a href={portal}>portal</a>.
-              </p>
+              <span className="icon" aria-hidden="true">🦁</span>
+              <h3>School trips</h3>
+              <p>Academic tours take learning outside the classroom — the most recent was to Amboseli National Park.</p>
             </div>
             <div className="card icon-tile">
-              <span className="icon" aria-hidden="true">🚌</span>
-              <h3>The school bus</h3>
+              <span className="icon" aria-hidden="true">🚐</span>
+              <h3>Transport</h3>
               <p>
-                {routes.length} route{routes.length === 1 ? '' : 's'} with named stops and published times. A child is
-                released only to a parent or a named adult. <Link href="/school-bus">See the routes</Link>.
+                Smooth school transport services to and from home.{' '}
+                {routes.length
+                  ? <Link href="/school-bus">See the routes</Link>
+                  : <>Ask the office about the route nearest you.</>}
               </p>
             </div>
           </div>

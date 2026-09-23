@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getLevels, getTerms } from '@/lib/site.ts';
+import { portalUrl } from '@/lib/urls.ts';
 import { formatDateShort } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
 import { Reveal } from '../site-chrome.tsx';
@@ -18,7 +19,7 @@ export default async function AcademicsPage() {
   const [school, levels, terms] = await Promise.all([getSettings(), getLevels(), getTerms()]);
   const today = new Date().toISOString().slice(0, 10);
   const current = terms.find((term) => term.is_current);
-  const portal = school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal';
+  const portal = portalUrl(school);
 
   return (
     <>
@@ -27,9 +28,9 @@ export default async function AcademicsPage() {
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Academics</div>
           <h1>Academics</h1>
           <p className="lead">
-            We teach the Kenyan Competency Based Curriculum across {levels.length} levels, from Pre-Primary through
-            Junior Secondary{school.stat_teachers ? `, with ${school.stat_teachers} qualified teachers` : ''} and subject
-            specialists from Grade 4 upwards.
+            We teach the Kenyan Competency Based Curriculum across {levels.length} levels
+            {levels.length ? `, from ${levels[0]!.name} to ${levels[levels.length - 1]!.name}` : ''}, with qualified
+            teaching staff{school.stat_teachers ? ` (${school.stat_teachers} teachers)` : ''} and a small teacher-to-pupil ratio.
           </p>
         </div>
       </div>
@@ -83,12 +84,12 @@ export default async function AcademicsPage() {
             <p>
               At the end of every term each pupil receives a report card showing every learning area, the mean
               performance, the class position where the school publishes it, and remarks from the class teacher and the
-              Principal. Report cards are published to parents through the <a href={portal}>parent portal</a>, where you
-              can also see attendance day by day.
-            </p>
-            <p>
-              Because marks, attendance and fees all live in one system, a parent asking &ldquo;how is my child
-              doing?&rdquo; gets the same answer from the portal, the report card and the class teacher.
+              Principal.{' '}
+              {portal ? (
+                <>Report cards are published to parents through the <a href={portal}>parent portal</a>, where you can also see attendance day by day.</>
+              ) : (
+                <>Parents receive the report card at the end of every term, and are welcome to talk it through with the class teacher.</>
+              )}
             </p>
           </div>
 
@@ -129,7 +130,7 @@ export default async function AcademicsPage() {
             <div className="card icon-tile">
               <span className="icon" aria-hidden="true">📝</span>
               <h3>Homework and prep</h3>
-              <p>Set to a published timetable so families can plan around it, and supervised every evening for boarders.</p>
+              <p>Set to a published timetable so families can plan around it.</p>
             </div>
             <div className="card icon-tile">
               <span className="icon" aria-hidden="true">🤝</span>

@@ -1,4 +1,5 @@
 import type { MetadataRoute } from 'next';
+import { siteUrl } from '@/lib/urls.ts';
 
 /**
  * The admin is disallowed here as a courtesy to well-behaved crawlers. It is not a security
@@ -6,7 +7,7 @@ import type { MetadataRoute } from 'next';
  * robots.txt is a request and not a lock.
  */
 export default function robots(): MetadataRoute.Robots {
-  const base = (process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000').replace(/\/$/, '');
+  const base = siteUrl();
   return {
     rules: [{ userAgent: '*', allow: '/', disallow: ['/admin', '/admin/', '/search'] }],
     sitemap: `${base}/sitemap.xml`,

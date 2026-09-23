@@ -124,8 +124,8 @@ export function EnquiryForm({
           name="message"
           maxLength={2000}
           placeholder={tour
-            ? 'e.g. the science lab, the boarding house, a Grade 5 lesson'
-            : 'e.g. Do you have a place in Grade 5 for January, and does the bus reach Ruaka?'}
+            ? 'e.g. a Grade 5 lesson, the computer class, the school transport'
+            : 'e.g. Do you have a place in Grade 5 for January, and does the school transport reach Kiwanja?'}
         />
       </div>
 

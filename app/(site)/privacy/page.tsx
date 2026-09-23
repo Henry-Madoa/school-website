@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings } from '@/lib/site.ts';
+import { portalUrl } from '@/lib/urls.ts';
 
 export const metadata: Metadata = {
   title: 'Privacy notice',
@@ -17,7 +18,7 @@ export const metadata: Metadata = {
  */
 export default async function PrivacyPage() {
   const school = await getSettings();
-  const portal = school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal';
+  const portal = portalUrl(school);
 
   return (
     <>
@@ -97,9 +98,13 @@ export default async function PrivacyPage() {
           <h2>Children&rsquo;s information</h2>
           <p className="small">
             Information about a child is given to us by a parent or guardian and is treated as sensitive. No
-            pupil&rsquo;s name, marks or fee balance is ever published on this website. A parent sees their own
-            child&rsquo;s records — and no one else&rsquo;s — through the <a href={portal}>parent portal</a>, which is
-            part of the management system, not this site.
+            pupil&rsquo;s name, marks or fee balance is ever published on this website.
+            {portal ? (
+              <>
+                {' '}A parent sees their own child&rsquo;s records — and no one else&rsquo;s — through the{' '}
+                <a href={portal}>parent portal</a>, which is part of the management system, not this site.
+              </>
+            ) : null}
           </p>
 
           <h2>Photographs</h2>

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getTerms, getUpcomingEvents } from '@/lib/site.ts';
+import { portalUrl } from '@/lib/urls.ts';
 import { formatDate, formatDateShort, dateParts } from '@/lib/format.ts';
 
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export default async function CalendarPage() {
   const [school, terms, events] = await Promise.all([getSettings(), getTerms(), getUpcomingEvents(8)]);
   const today = new Date().toISOString().slice(0, 10);
   const next = terms.find((term) => term.start_date > today);
-  const portal = school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal';
+  const portal = portalUrl(school);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -91,8 +92,8 @@ export default async function CalendarPage() {
               <h3>Also worth knowing</h3>
               <ul className="small" style={{ paddingLeft: 18, margin: 0 }}>
                 <li>Half-term breaks, exam weeks and closing days are announced as notices — see <Link href="/news">News &amp; notices</Link>.</li>
-                <li>Reporting times on opening day differ for boarders and day scholars; the notice before each term gives both.</li>
-                <li>Parents signed in to the <a href={portal}>portal</a> see term dates alongside their child&rsquo;s timetable.</li>
+                <li>Reporting times for opening day are in the notice sent before each term.</li>
+                {portal ? <li>Parents signed in to the <a href={portal}>portal</a> see term dates alongside their child&rsquo;s timetable.</li> : null}
               </ul>
             </div>
           </div>

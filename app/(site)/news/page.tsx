@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { getSettings, getPosts, getTerms, getUpcomingEvents } from '@/lib/site.ts';
 import { formatDate, formatDateShort, dateParts, truncate } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
+import { portalUrl } from '@/lib/urls.ts';
 import { POST_CATEGORIES } from '@/lib/types.ts';
 import { FilterList } from '../site-chrome.tsx';
 
@@ -14,6 +15,7 @@ export const metadata: Metadata = {
 
 export default async function NewsPage() {
   const [school, posts, terms, events] = await Promise.all([getSettings(), getPosts(60), getTerms(), getUpcomingEvents(4)]);
+  const portal = portalUrl(school);
   const today = new Date().toISOString().slice(0, 10);
   const upcoming = terms.filter((term) => term.end_date >= today).slice(0, 4);
   const [lead, ...rest] = posts;
@@ -144,13 +146,15 @@ export default async function NewsPage() {
               </div>
             ) : null}
 
-            <div className="callout callout-accent" style={{ marginTop: 16 }}>
-              <h3>Are you a parent here?</h3>
-              <p className="tiny" style={{ margin: 0 }}>
-                Notices addressed to your child&rsquo;s class, results, attendance and the fee statement all sit in the{' '}
-                <a href={school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal'}>parent portal</a>.
-              </p>
-            </div>
+            {portal ? (
+              <div className="callout callout-accent" style={{ marginTop: 16 }}>
+                <h3>Are you a parent here?</h3>
+                <p className="tiny" style={{ margin: 0 }}>
+                  Notices addressed to your child&rsquo;s class, results, attendance and the fee statement all sit in the{' '}
+                  <a href={portal}>parent portal</a>.
+                </p>
+              </div>
+            ) : null}
           </aside>
         </div>
       </section>

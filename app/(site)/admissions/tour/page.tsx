@@ -45,11 +45,9 @@ export default async function TourPage() {
               <h3>What you will see</h3>
               <ul className="small" style={{ paddingLeft: 18, margin: 0 }}>
                 <li>Classrooms in session, at the grade your child would join</li>
-                <li>The science and computer laboratories, and the library</li>
-                <li>The dining hall, and a normal school lunch</li>
-                <li>Boarding houses, if boarding interests you</li>
-                <li>The playing fields, and the buses if you would use one</li>
-                <li>A conversation with the Principal or the Registrar</li>
+                <li>A computer class, and the clubs if your visit falls on a club day</li>
+                <li>The school transport, if your child would use it</li>
+                <li>A conversation with the school leadership about your child</li>
               </ul>
             </div>
 

@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { getSettings, getLevels } from '@/lib/site.ts';
 import { telHref, whatsappHref } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
+import { portalUrl } from '@/lib/urls.ts';
 import { SiteNav, ScrollWatcher, StaffLink, type NavGroup } from './site-nav.tsx';
 import { BackToTop } from './site-chrome.tsx';
 import { NewsletterForm } from './forms.tsx';
@@ -26,7 +27,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
   const [school, levels] = await Promise.all([getSettings(), getLevels()]);
   const year = new Date().getFullYear();
   const short = school.short_name ?? school.name;
-  const portalUrl = school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal';
+  const portal = portalUrl(school);
 
   const groups: NavGroup[] = [
     {
@@ -35,7 +36,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
       items: [
         { href: '/about', label: 'Our story', hint: 'Who we are and what we believe' },
         { href: '/staff', label: 'Leadership & staff', hint: 'The people who teach your child' },
-        { href: '/student-life', label: 'Student life', hint: 'A day here, clubs, sport, boarding' },
+        { href: '/student-life', label: 'Student life', hint: 'A week here, clubs and trips' },
         { href: '/gallery', label: 'Photo gallery' },
       ],
     },
@@ -122,7 +123,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             </span>
           </Link>
 
-          <SiteNav groups={groups} portalUrl={portalUrl} portalLabel="Parent Portal" />
+          <SiteNav groups={groups} portalUrl={portal} portalLabel="Parent Portal" />
         </div>
       </header>
 
@@ -192,9 +193,11 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                 <li><Link href="/news">News & notices</Link></li>
                 <li><Link href="/events">What&rsquo;s on</Link></li>
                 <li><Link href="/contact">Contact the office</Link></li>
-                <li>
-                  <a href={portalUrl} target={external(portalUrl) ? '_blank' : undefined} rel="noreferrer">Parent &amp; student portal</a>
-                </li>
+                {portal ? (
+                  <li>
+                    <a href={portal} target={external(portal) ? '_blank' : undefined} rel="noreferrer">Parent &amp; student portal</a>
+                  </li>
+                ) : null}
                 <li><StaffLink signInLabel="Website admin sign-in" signedInLabel="Website admin dashboard" /></li>
                 <li><Link href="/privacy">Privacy notice</Link></li>
               </ul>

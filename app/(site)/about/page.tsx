@@ -15,14 +15,14 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 const FACILITIES: [icon: string, title: string, body: string][] = [
-  ['🏫', 'Classrooms', 'Purpose-built classrooms for each level, arranged so the youngest children are furthest from the gate.'],
-  ['🔬', 'Laboratories', 'Science and computer laboratories, used from Upper Primary upwards.'],
-  ['📚', 'Library', 'Catalogued, staffed from 7 am, and open to every pupil — including the ones who come on the first bus.'],
-  ['🛏', 'Boarding', 'Houses with resident wardens, supervised prep and weekend activities.'],
-  ['⚽', 'Playing fields', 'Football, netball, athletics and games as part of the timetable, not an afterthought.'],
-  ['🍲', 'Dining hall', 'A cooked lunch daily, on a published menu cycle.'],
-  ['🩺', 'Sick bay', 'Staffed, with parents contacted the same day about anything beyond a scraped knee.'],
-  ['🚌', 'Transport', 'Buses the school owns and drivers the school employs, on published routes.'],
+  ['🏫', 'Classrooms', 'Spacious, naturally-lit classrooms for every level, from Playgroup upwards.'],
+  ['👩🏾‍🏫', 'Small classes', 'A small teacher-to-pupil ratio, with qualified teaching and non-teaching staff.'],
+  ['💻', 'Computer classes', 'A centre of digital literacy, with computing part of every pupil’s week.'],
+  ['🗣', 'French', 'A foreign language taught alongside English and Kiswahili.'],
+  ['🎭', 'Clubs & societies', 'Scouts, Music, Poetry and Drama, among others.'],
+  ['✝️', 'Christian foundation', 'Founded on strong Christian principles, and part of the PEFA Church Kiwanja community.'],
+  ['🚐', 'Transport', 'Smooth school transport services to and from home.'],
+  ['✅', 'Standards', 'Facilities that meet Ministry of Education and Ministry of Health standards.'],
 ];
 
 export default async function AboutPage() {
@@ -65,6 +65,7 @@ export default async function AboutPage() {
 
             <h3 style={{ marginTop: 28 }}>What we believe</h3>
             <ul>
+              <li><strong>Faith</strong> — a Christian-based school, moulding children with Christ-like values.</li>
               <li><strong>Knowledge</strong> — taught properly, assessed honestly, and reported to parents in full.</li>
               <li><strong>Character</strong> — courtesy, effort and responsibility, expected of every pupil and every adult here.</li>
               <li><strong>Excellence</strong> — the best each child is capable of, which is not the same number for every child.</li>
@@ -151,7 +152,7 @@ export default async function AboutPage() {
         <div className="wrap">
           <div className="section-head center">
             <div className="eyebrow">Our facilities</div>
-            <h2>Everything a school this size needs, and nothing it does not</h2>
+            <h2>What the school offers</h2>
           </div>
           <div className="grid g4">
             {FACILITIES.map(([icon, title, body], index) => (

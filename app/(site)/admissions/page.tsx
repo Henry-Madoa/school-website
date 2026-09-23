@@ -47,7 +47,7 @@ export default async function AdmissionsPage() {
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Admissions</div>
           <h1>Admissions</h1>
           <p className="lead">
-            We admit pupils from Pre-Primary to Junior Secondary, as day scholars and boarders.
+            We admit day pupils at every level we teach, from Playgroup to Junior School.
             {nextTerm ? ` The next intake is ${nextTerm.name} ${nextTerm.year_name}, opening ${formatDate(nextTerm.start_date)}.` : ''}
           </p>
           <div className="btn-row">
@@ -89,7 +89,7 @@ export default async function AdmissionsPage() {
               <div className="step">
                 <div>
                   <h3>Offer, acceptance and reporting</h3>
-                  <p>We send an offer with the fee structure and a reporting date. Once the place is accepted, your parent portal login is created and the fee account opens.</p>
+                  <p>We send an offer with the fee structure and a reporting date. Once the place is accepted, the office confirms the fees and your child&rsquo;s first day.</p>
                 </div>
               </div>
             </div>
@@ -126,7 +126,7 @@ export default async function AdmissionsPage() {
           {lowestFee > 0 ? (
             <div className="callout" style={{ marginTop: 28 }}>
               <strong>Fees start at {formatMoney(lowestFee, school.currency_symbol)} a term</strong> for compulsory items,
-              before optional boarding, lunch or transport.{' '}
+              before optional lunch or transport.{' '}
               <Link href="/admissions/fees" className="text-link">See the full fee structure</Link>
             </div>
           ) : null}

@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { getSettings, getEvent, getUpcomingEvents } from '@/lib/site.ts';
 import { formatDate, formatDateTime, formatTime, truncate, relativeDays } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
+import { siteUrl } from '@/lib/urls.ts';
 import { EVENT_CATEGORIES } from '@/lib/types.ts';
 import { RsvpForm } from '../../forms.tsx';
 
@@ -53,7 +54,7 @@ export default async function EventPage({ params }: Params) {
   const category = EVENT_CATEGORIES.find((c) => c.value === event.category);
   const past = Date.parse(event.ends_at ?? event.starts_at) < new Date().getTime();
   const placesLeft = event.capacity === null ? null : Math.max(0, event.capacity - event.rsvp_guests);
-  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+  const origin = siteUrl();
 
   const jsonLd = {
     '@context': 'https://schema.org',

@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getGrades, getStaff } from '@/lib/site.ts';
+import { portalUrl } from '@/lib/urls.ts';
 import { telHref, whatsappHref } from '@/lib/format.ts';
 import { EnquiryForm } from '../forms.tsx';
 
@@ -18,7 +19,7 @@ export default async function ContactPage() {
   const mapQuery = encodeURIComponent(
     [school.physical_address, school.city, school.county, school.country ?? 'Kenya'].filter(Boolean).join(', '),
   );
-  const portal = school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal';
+  const portal = portalUrl(school);
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -34,7 +35,7 @@ export default async function ContactPage() {
       addressRegion: school.county ?? undefined,
       addressCountry: school.country ?? 'KE',
     },
-    openingHours: 'Mo-Fr 07:00-17:00',
+    openingHours: 'Mo-Fr 07:30-17:30',
   };
 
   return (
@@ -124,13 +125,15 @@ export default async function ContactPage() {
               </div>
             ) : null}
 
-            <div className="callout callout-accent" style={{ marginTop: 16 }}>
-              <h3>Already a parent?</h3>
-              <p className="small" style={{ margin: 0 }}>
-                Fee statements, results, attendance and your child&rsquo;s bus route are all in the{' '}
-                <a href={portal}>parent portal</a> — faster than a phone call, and available at any hour.
-              </p>
-            </div>
+            {portal ? (
+              <div className="callout callout-accent" style={{ marginTop: 16 }}>
+                <h3>Already a parent?</h3>
+                <p className="small" style={{ margin: 0 }}>
+                  Fee statements, results, attendance and your child&rsquo;s bus route are all in the{' '}
+                  <a href={portal}>parent portal</a> — faster than a phone call, and available at any hour.
+                </p>
+              </div>
+            ) : null}
 
             <div className="btn-row">
               <Link href="/admissions/tour" className="btn btn-primary">Book a visit</Link>

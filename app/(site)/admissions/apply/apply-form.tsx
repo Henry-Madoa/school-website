@@ -31,7 +31,6 @@ export function ApplyForm({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [reference, setReference] = useState<string | null>(null);
-  const [boarding, setBoarding] = useState('DAY');
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -88,16 +87,10 @@ export function ApplyForm({
             </select>
             {intakeTerm ? <p className="hint">Applications are being taken for {intakeTerm}.</p> : null}
           </div>
-          <div>
-            <label htmlFor="ap-boarding">Day or boarding <Req /></label>
-            <select id="ap-boarding" name="boarding_status" required value={boarding} onChange={(e) => setBoarding(e.target.value)}>
-              <option value="DAY">Day scholar</option>
-              <option value="BOARDER">Boarder</option>
-            </select>
-          </div>
+          <input type="hidden" name="boarding_status" value="DAY" />
         </div>
 
-        {boarding === 'DAY' && routes.length ? (
+        {routes.length ? (
           <div>
             <label htmlFor="ap-route">School bus <span className="optional">(optional)</span></label>
             <select id="ap-route" name="transport_route" defaultValue="">
@@ -172,7 +165,7 @@ export function ApplyForm({
           <div>
             <label htmlFor="ap-gphone">Phone number <Req /></label>
             <input id="ap-gphone" name="guardian_phone" type="tel" required={step === 2} inputMode="tel" autoComplete="tel" placeholder="07xx xxx xxx" maxLength={30} />
-            <p className="hint">This is how the school will reach you, and it becomes your portal login.</p>
+            <p className="hint">This is how the school will reach you about the application.</p>
           </div>
           <div>
             <label htmlFor="ap-gemail">Email <span className="optional">(optional)</span></label>

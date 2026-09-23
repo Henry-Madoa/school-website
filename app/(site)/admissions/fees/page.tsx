@@ -130,7 +130,6 @@ export default async function FeesPage() {
                 <strong>Transport</strong> — if you use the school bus, the termly fare depends on the route.
                 {routes.length ? <> <Link href="/school-bus">See routes and fares</Link>.</> : null}
               </li>
-              <li><strong>Boarding</strong> — for boarders only, including meals and supervised prep.</li>
               <li><strong>Trips and activities</strong> — optional, always announced with the cost in advance.</li>
             </ul>
 

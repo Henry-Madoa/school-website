@@ -51,7 +51,7 @@ export default async function ApplyPage() {
                 <li>The admissions office calls within three working days to book the placement assessment.</li>
                 <li>You bring the birth certificate, the latest report card and — for a transfer — a letter from the previous school.</li>
                 <li>We send an offer with the fee structure and a reporting date.</li>
-                <li>On admission your parent portal login is created and the fee account opens.</li>
+                <li>Once the place is accepted, your child joins the class on the reporting date.</li>
               </ol>
             </div>
 
@@ -72,7 +72,7 @@ export default async function ApplyPage() {
               <ul className="tiny" style={{ paddingLeft: 18, margin: 0 }}>
                 <li>The child&rsquo;s full name and date of birth</li>
                 <li>The grade you are applying for — <Link href="/academics">see the levels</Link></li>
-                <li>Your phone number, which becomes your portal login</li>
+                <li>Your phone number, so the school can call you back</li>
                 <li>Whether you would like the school bus — <Link href="/school-bus">routes and stops</Link></li>
               </ul>
             </div>

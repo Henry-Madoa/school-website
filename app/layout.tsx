@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, Source_Serif_4 } from 'next/font/google';
 import { getSettings } from '@/lib/site.ts';
+import { siteUrl } from '@/lib/urls.ts';
 import './globals.css';
 
 /*
@@ -35,7 +36,7 @@ export const viewport: Viewport = {
  */
 export async function generateMetadata(): Promise<Metadata> {
   const school = await getSettings();
-  const base = process.env.NEXT_PUBLIC_SITE_URL ?? 'http://localhost:3000';
+  const base = siteUrl();
   return {
     metadataBase: new URL(base),
     title: { default: `${school.name}${school.motto ? ` — ${school.motto}` : ''}`, template: `%s · ${school.short_name ?? school.name}` },

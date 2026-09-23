@@ -2,10 +2,11 @@ import Link from 'next/link';
 import type { Metadata } from 'next';
 import {
   getSettings, getLevels, getPosts, getUpcomingEvents, getTerms, getGrades,
-  getAlbums, getTestimonials, getRoutes, getLowestTermFee,
+  getAlbums, getTestimonials, getLowestTermFee,
 } from '@/lib/site.ts';
-import { formatDate, formatDateShort, dateParts, formatMoney, truncate, initials } from '@/lib/format.ts';
+import { formatDate, formatDateShort, dateParts, formatMoney, truncate, initials, telHref } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
+import { portalUrl, siteUrl } from '@/lib/urls.ts';
 import { EnquiryForm } from './forms.tsx';
 import { Reveal, CountUp } from './site-chrome.tsx';
 
@@ -19,9 +20,9 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function HomePage() {
-  const [school, levels, posts, events, terms, grades, albums, testimonials, routes, lowestFee] = await Promise.all([
+  const [school, levels, posts, events, terms, grades, albums, testimonials, lowestFee] = await Promise.all([
     getSettings(), getLevels(), getPosts(4), getUpcomingEvents(3), getTerms(), getGrades(),
-    getAlbums(), getTestimonials(6), getRoutes(), getLowestTermFee(),
+    getAlbums(), getTestimonials(6), getLowestTermFee(),
   ]);
 
   const today = new Date().toISOString().slice(0, 10);
@@ -30,6 +31,10 @@ export default async function HomePage() {
   const headline = posts[0];
   const photos = albums.flatMap((album) => album.photos.map((photo) => ({ ...photo, album: album.slug }))).slice(0, 6);
   const heroImage = school.hero_image_url;
+  const portal = portalUrl(school);
+  const firstGrade = levels[0]?.grades[0]?.name;
+  const lastGrade = levels[levels.length - 1]?.grades.at(-1)?.name;
+  const gradeSpan = firstGrade && lastGrade ? `${firstGrade} to ${lastGrade}` : 'every level';
 
   /* The structured data search engines and assistants read before anything else on the page. */
   const jsonLd = {
@@ -41,7 +46,7 @@ export default async function HomePage() {
     description: school.about_intro ?? undefined,
     email: school.email ?? undefined,
     telephone: school.phone_primary ?? undefined,
-    url: process.env.NEXT_PUBLIC_SITE_URL ?? undefined,
+    url: siteUrl(),
     image: heroImage ?? undefined,
     foundingDate: school.founded_year ?? undefined,
     address: {
@@ -57,7 +62,7 @@ export default async function HomePage() {
     ].filter(Boolean),
     educationalCredentialAwarded: 'Kenya Competency Based Curriculum (CBC)',
     numberOfStudents: school.stat_students || undefined,
-    openingHours: 'Mo-Fr 07:00-17:00',
+    openingHours: 'Mo-Fr 07:30-17:30',
   };
 
   return (
@@ -81,7 +86,7 @@ export default async function HomePage() {
             <h1>{school.hero_headline ?? school.motto ?? `Welcome to ${school.name}`}</h1>
             <p className="lead">
               {school.hero_body
-                ?? `${school.name} teaches the Competency Based Curriculum from Pre-Primary through Junior Secondary. Small classes, teachers who know every child by name, and a school office you can actually reach.`}
+                ?? `${school.name} teaches the Competency Based Curriculum in a Christian setting, with small classes and qualified teachers.`}
             </p>
 
             <div className="btn-row">
@@ -90,21 +95,32 @@ export default async function HomePage() {
             </div>
 
             <div className="hero-facts">
-              <div className="hero-fact"><b>{school.stat_students || levels.length}</b><span>{school.stat_students ? 'pupils on the roll' : 'levels taught'}</span></div>
-              <div className="hero-fact"><b>{school.stat_teachers || '—'}</b><span>qualified teachers</span></div>
-              <div className="hero-fact"><b>{levels.length}</b><span>levels, PP1 to Grade 9</span></div>
-              <div className="hero-fact"><b>{routes.length}</b><span>bus routes across the city</span></div>
+              {school.stat_students ? <div className="hero-fact"><b>{school.stat_students}</b><span>pupils on the roll</span></div> : null}
+              {school.stat_teachers ? <div className="hero-fact"><b>{school.stat_teachers}</b><span>qualified teachers</span></div> : null}
+              <div className="hero-fact"><b>{levels.length}</b><span>levels, {gradeSpan}</span></div>
+              <div className="hero-fact"><b>{levels.reduce((n, level) => n + level.grades.length, 0)}</b><span>grades taught</span></div>
+              <div className="hero-fact"><b>CBC</b><span>Competency Based Curriculum</span></div>
             </div>
           </div>
 
           <div className="hero-card">
-            <h3>Already a parent here?</h3>
-            <p className="small muted">
-              Fee statements, results, attendance and your child&rsquo;s bus route — all in the portal, at any hour.
-            </p>
-            <Link href={school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal'} className="btn btn-primary btn-block">
-              Open the Parent Portal
-            </Link>
+            {portal ? (
+              <>
+                <h3>Already a parent here?</h3>
+                <p className="small muted">
+                  Fee statements, results, attendance and your child&rsquo;s bus route — all in the portal, at any hour.
+                </p>
+                <a href={portal} className="btn btn-primary btn-block">Open the Parent Portal</a>
+              </>
+            ) : (
+              <>
+                <h3>Talk to the school office</h3>
+                <p className="small muted">
+                  {school.office_hours ?? 'The office is open on weekdays.'} Call us, or pay us a visit and see the school at work.
+                </p>
+                {school.phone_primary ? <a href={telHref(school.phone_primary)} className="btn btn-primary btn-block">Call {school.phone_primary}</a> : null}
+              </>
+            )}
 
             <hr />
 
@@ -127,7 +143,7 @@ export default async function HomePage() {
         <div className="wrap">
           <Reveal>
             <div className="stat-strip">
-              <div className="stat">{school.stat_students ? <CountUp value={school.stat_students} /> : <b>&mdash;</b>}<span>pupils, PP1 to Grade 9</span></div>
+              <div className="stat">{school.stat_students ? <CountUp value={school.stat_students} /> : <b>&mdash;</b>}<span>pupils, {gradeSpan}</span></div>
               <div className="stat">{school.stat_teachers ? <CountUp value={school.stat_teachers} /> : <b>&mdash;</b>}<span>qualified teachers</span></div>
               <div className="stat">{school.stat_clubs ? <CountUp value={school.stat_clubs} /> : <b>&mdash;</b>}<span>clubs and societies</span></div>
               <div className="stat">
@@ -152,10 +168,10 @@ export default async function HomePage() {
 
           <div className="grid g4">
             {[
-              ['👩🏾‍🏫', 'Teachers who stay', `${school.stat_teachers || 'Qualified'} TSC-registered teachers across ${levels.length} levels, with subject specialists from Grade 4 upwards.`],
-              ['📊', 'Reporting you can see', 'Continuous assessment, competency bands and a report card published to you online at the end of every term.'],
-              ['🚌', `${routes.length} bus routes`, `Named stops and published times, on routes the transport office actually works to.`],
-              ['🏫', 'Facilities built for it', 'Laboratories, a library, playing fields, a dining hall and a staffed sick bay — everything a school this size needs.'],
+              ['✝️', 'Christ-like values', 'A Christian-based school that moulds children with Christ-like values, and honours God through excellence.'],
+              ['👩🏾‍🏫', 'Small classes', 'A small teacher-to-pupil ratio, with qualified teaching and non-teaching staff.'],
+              ['💻', 'Beyond the basics', 'Computer and French classes, and clubs from Scouts to Music, Poetry and Drama.'],
+              ['🏫', 'Facilities built for it', 'Spacious, naturally-lit classrooms, and facilities that meet Ministry of Education and Ministry of Health standards.'],
             ].map(([icon, title, body], index) => (
               <Reveal key={title} delay={index * 70}>
                 <div className="card icon-tile" style={{ height: '100%' }}>
@@ -175,7 +191,7 @@ export default async function HomePage() {
           <div className="head-row">
             <div className="section-head">
               <div className="eyebrow">Academics</div>
-              <h2>From Pre-Primary to Junior Secondary</h2>
+              <h2>{levels.length ? `From ${levels[0]!.name} to ${levels[levels.length - 1]!.name}` : 'What we teach'}</h2>
               <p className="lead">The Kenyan Competency Based Curriculum, taught across {levels.length} levels.</p>
             </div>
             <Link href="/academics" className="text-link">All academics</Link>
@@ -357,7 +373,7 @@ export default async function HomePage() {
               <div className="step">
                 <div>
                   <h3>Offer and reporting</h3>
-                  <p>An offer letter, the fee structure and a reporting date. Your portal login is created the day your child is admitted.</p>
+                  <p>An offer letter, the fee structure and a reporting date for your child&rsquo;s first day.</p>
                 </div>
               </div>
             </div>

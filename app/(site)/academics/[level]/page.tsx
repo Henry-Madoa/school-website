@@ -128,7 +128,7 @@ export default async function LevelPage({ params }: Params) {
                   </table>
                 </div>
                 <p className="optional">
-                  Before optional boarding, lunch or transport. <Link href="/admissions/fees">The full fee structure</Link>.
+                  Before optional lunch or transport. <Link href="/admissions/fees">The full fee structure</Link>.
                 </p>
               </>
             ) : null}

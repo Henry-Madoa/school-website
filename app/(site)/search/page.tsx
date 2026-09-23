@@ -37,8 +37,8 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
             <div className="callout">
               <h3>What are you looking for?</h3>
               <p className="small" style={{ margin: 0 }}>
-                Type two letters or more. This searches the notices, events, staff and questions on this website — not
-                pupil records, which live behind the parent portal.
+                Type two letters or more. This searches the notices, events, staff and questions on this website. No
+                pupil records are held here.
               </p>
             </div>
           ) : hits.length === 0 ? (

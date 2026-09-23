@@ -2,6 +2,7 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import type { Metadata } from 'next';
 import { getSettings } from '@/lib/site.ts';
+import { portalUrl } from '@/lib/urls.ts';
 import { currentUser } from '@/lib/auth.ts';
 import { cdn } from '@/lib/cloudinary.ts';
 import { LoginForm } from './login-form.tsx';
@@ -20,7 +21,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   // Only a path within this site, so the parameter cannot be used to bounce anyone elsewhere.
   const destination = next && /^\/admin(\/|$)/.test(next) && !next.startsWith('//') ? next : '/admin';
   const short = school.short_name ?? school.name;
-  const portal = school.portal_url ?? process.env.NEXT_PUBLIC_PORTAL_URL ?? '/portal';
+  const portal = portalUrl(school);
 
   const brand = (className: string) => (
     <Link href="/" className={className}>
@@ -70,7 +71,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           <div className="login-head">
             <h1>Sign in</h1>
             <p>
-              For staff who edit the website. Parents and pupils should use the <a href={portal}>parent portal</a> instead.
+              For staff who edit the website.
+              {portal ? <> Parents and pupils should use the <a href={portal}>parent portal</a> instead.</> : null}
             </p>
           </div>
 
