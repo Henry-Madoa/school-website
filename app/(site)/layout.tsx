@@ -131,9 +131,25 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
 
       <footer className="footer">
         <div className="wrap">
+          <div className="footer-cta">
+            <div>
+              <h3>Come and see the school at work</h3>
+              <p>Book a visit on any weekday, or start an application online in about ten minutes.</p>
+              <div className="footer-cta-actions">
+                <Link href="/admissions/tour" className="btn btn-sm btn-accent">Book a visit</Link>
+                <Link href="/admissions/apply" className="btn btn-sm btn-light">Apply online</Link>
+              </div>
+            </div>
+            <div>
+              <h3>Monthly round-up</h3>
+              <p>One email at the end of each month. Nothing else, ever.</p>
+              <NewsletterForm sourcePage="footer" />
+            </div>
+          </div>
+
           <div className="footer-grid">
             <div>
-              <Link href="/" className="brand" style={{ marginBottom: 16 }}>
+              <Link href="/" className="brand" style={{ marginBottom: 18 }}>
                 <span className="brand-mark">
                   {school.logo_url
                     ? <img src={cdn(school.logo_url, { width: 92, height: 92 })} alt="" width={46} height={46} />
@@ -144,12 +160,32 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                   {school.motto ? <span>{school.motto}</span> : null}
                 </span>
               </Link>
-              <p className="tiny" style={{ color: 'rgb(255 255 255 / 0.7)' }}>
-                {school.physical_address}<br />
-                {school.postal_address}{school.city ? `, ${school.city}` : ''}<br />
-                {school.phone_primary}{school.phone_secondary ? ` · ${school.phone_secondary}` : ''}<br />
-                {school.email}
-              </p>
+              <ul className="footer-contact">
+                {school.physical_address ? (
+                  <li>
+                    <span className="ico" aria-hidden="true">📍</span>
+                    <span>
+                      {school.physical_address}
+                      {school.postal_address || school.city ? <><br />{school.postal_address}{school.city ? `, ${school.city}` : ''}</> : null}
+                    </span>
+                  </li>
+                ) : null}
+                {school.phone_primary ? (
+                  <li>
+                    <span className="ico" aria-hidden="true">📞</span>
+                    <span>
+                      <a href={telHref(school.phone_primary)}>{school.phone_primary}</a>
+                      {school.phone_secondary ? <> · <a href={telHref(school.phone_secondary)}>{school.phone_secondary}</a></> : null}
+                    </span>
+                  </li>
+                ) : null}
+                {school.email ? (
+                  <li><span className="ico" aria-hidden="true">✉</span><a href={`mailto:${school.email}`}>{school.email}</a></li>
+                ) : null}
+                {school.office_hours ? (
+                  <li><span className="ico" aria-hidden="true">🕒</span><span>{school.office_hours}</span></li>
+                ) : null}
+              </ul>
               {school.registration_no ? (
                 <p className="tiny" style={{ color: 'rgb(255 255 255 / 0.5)' }}>
                   Ministry of Education registration {school.registration_no}
@@ -201,11 +237,6 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                 <li><StaffLink signInLabel="Website admin sign-in" signedInLabel="Website admin dashboard" /></li>
                 <li><Link href="/privacy">Privacy notice</Link></li>
               </ul>
-              <h4 style={{ marginTop: 24 }}>Monthly round-up</h4>
-              <p className="tiny" style={{ color: 'rgb(255 255 255 / 0.65)', margin: 0 }}>
-                One email at the end of each month. Nothing else, ever.
-              </p>
-              <NewsletterForm sourcePage="footer" />
             </div>
           </div>
 
