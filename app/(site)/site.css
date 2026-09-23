@@ -1170,6 +1170,8 @@ table.data tbody tr:hover { background: color-mix(in srgb, var(--brand) 3%, tran
   color: rgb(255 255 255 / 0.6);
 }
 
+.footer-base .powered-by strong { color: rgb(255 255 255 / 0.85); font-weight: 600; }
+
 .newsletter { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; }
 .newsletter input {
   flex: 1 1 190px;

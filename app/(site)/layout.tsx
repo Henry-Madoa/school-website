@@ -105,7 +105,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             {school.x_url ? <a href={school.x_url} target="_blank" rel="noreferrer" aria-label="X">𝕏</a> : null}
           </span>
           <span className="spacer" />
-          <StaffLink className="hide-phone" signInLabel="Staff sign-in" signedInLabel="Admin dashboard" />
+          <StaffLink signInLabel="Staff sign-in" signedInLabel="Admin dashboard" />
         </div>
       </div>
 
@@ -213,6 +213,7 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             <span>© {year} {school.name}. All rights reserved.</span>
             <span className="spacer" />
             {school.paybill_no ? <span>Fees: M-Pesa paybill <strong>{school.paybill_no}</strong>, account = admission number.</span> : null}
+            <span className="powered-by">Powered by <strong>Calbytes Technologies Limited</strong></span>
           </div>
         </div>
       </footer>
