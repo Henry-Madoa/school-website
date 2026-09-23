@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>School Website — Functional Proposal</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+  :root {
+    --brand: #1d5fa8; --brand-dark: #133f72; --accent: #f0a500;
+    --ink: #17222e; --muted: #5b6b7c; --line: #d9e1ea; --soft: #f2f6fb; --ok: #1b8a5a;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: "Segoe UI", "Inter", system-ui, -apple-system, sans-serif;
+    color: var(--ink); font-size: 10.4pt; line-height: 1.5; margin: 0;
+  }
+  h1, h2, h3, h4 { color: var(--brand-dark); line-height: 1.25; margin: 0 0 6px; }
+  h2 { font-size: 15pt; margin-top: 20px; padding-bottom: 5px; border-bottom: 2px solid var(--brand); break-after: avoid; }
+  h3 { font-size: 11.6pt; margin-top: 14px; break-after: avoid; }
+  h4 { font-size: 10.4pt; margin-top: 10px; color: var(--brand); break-after: avoid; }
+  p { margin: 0 0 8px; }
+  ul, ol { margin: 0 0 8px; padding-left: 18px; }
+  li { margin-bottom: 3px; }
+  a { color: var(--brand); word-break: break-word; }
+  code { font-family: "Cascadia Mono", Consolas, monospace; font-size: 9pt; background: var(--soft); padding: 1px 4px; border-radius: 3px; }
+  pre { font-family: "Cascadia Mono", Consolas, monospace; font-size: 8.4pt; background: var(--soft); border: 1px solid var(--line);
+        border-radius: 6px; padding: 8px 10px; overflow: hidden; white-space: pre-wrap; margin: 0 0 10px; break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 12px; font-size: 9.4pt; break-inside: auto; }
+  th, td { border: 1px solid var(--line); padding: 5px 7px; text-align: left; vertical-align: top; }
+  th { background: var(--soft); color: var(--brand-dark); font-weight: 600; }
+  tr { break-inside: avoid; }
+  .cover { height: 250mm; display: flex; flex-direction: column; justify-content: center; break-after: page; }
+  .cover .eyebrow { color: var(--accent); font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; font-size: 9pt; }
+  .cover h1 { font-size: 30pt; margin: 10px 0 6px; }
+  .cover .sub { font-size: 13pt; color: var(--muted); margin-bottom: 26px; }
+  .cover .rule { height: 5px; width: 90px; background: var(--accent); margin-bottom: 26px; }
+  .cover dl { display: grid; grid-template-columns: 42mm 1fr; gap: 5px 10px; font-size: 10pt; margin: 0; }
+  .cover dt { color: var(--muted); }
+  .cover dd { margin: 0; font-weight: 600; }
+  .lead { font-size: 11pt; color: var(--muted); }
+  .box { background: var(--soft); border-left: 4px solid var(--brand); border-radius: 0 6px 6px 0; padding: 9px 12px; margin: 0 0 12px; break-inside: avoid; }
+  .box.warn { border-left-color: var(--accent); background: #fff8e8; }
+  .box.ok { border-left-color: var(--ok); background: #eef8f2; }
+  .box h4 { margin-top: 0; }
+  .pill { display: inline-block; font-size: 8pt; font-weight: 700; padding: 1px 7px; border-radius: 10px;
+          background: var(--brand); color: #fff; vertical-align: middle; }
+  .pill.p2 { background: #6b7f94; } .pill.p3 { background: #9aa8b6; } .pill.ai { background: var(--ok); }
+  .toc ol { list-style: none; padding-left: 0; counter-reset: toc; }
+  .toc > ol > li { counter-increment: toc; font-weight: 600; margin: 5px 0 2px; }
+  .toc > ol > li::before { content: counter(toc) ". "; color: var(--brand); }
+  .toc ol ol { padding-left: 16px; font-weight: 400; color: var(--muted); font-size: 9.6pt; }
+  .toc ol ol li { margin: 1px 0; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .card { border: 1px solid var(--line); border-radius: 7px; padding: 9px 11px; break-inside: avoid; }
+  .card h4 { margin-top: 0; }
+  .muted { color: var(--muted); }
+  .small { font-size: 9pt; }
+  .page-break { break-before: page; }
+  footer { margin-top: 22px; border-top: 1px solid var(--line); padding-top: 8px; color: var(--muted); font-size: 8.6pt; }
+</style>
+</head>
+<body>
+
+<section class="cover">
+  <div class="eyebrow">Proposal &amp; functional specification</div>
+  <h1>The School Website</h1>
+  <div class="sub">A public website for Nairobi Green Valley Academy, joined to the school’s management system</div>
+  <div class="rule"></div>
+  <dl>
+    <dt>Prepared for</dt><dd>Nairobi Green Valley Academy — Board &amp; Senior Management</dd>
+    <dt>Subject</dt><dd>Scope, functionality and delivery plan for greenvalley.ac.ke</dd>
+    <dt>Companion system</dt><dd>Green Valley School Management System (live)</dd>
+    <dt>Parent &amp; student portal</dt><dd><a href="https://school-mgmt-sage.vercel.app/portal">school-mgmt-sage.vercel.app/portal</a></dd>
+    <dt>Date</dt><dd>22 September 2026</dd>
+    <dt>Status</dt><dd>For review and approval</dd>
+  </dl>
+</section>
+
+<h2>1. Why the school needs this website</h2>
+<p class="lead">The school already runs a complete management system: admissions, classes, marks, report cards, fees through the ledger, transport, boarding and the library. What it does not yet have is a <strong>front door</strong> — a public place where a parent who has never met the school can find it, judge it, ask a question and start an application without picking up the phone.</p>
+
+<p>Today every enquiry arrives as a phone call or a walk-in during office hours. Each one costs staff time, arrives without a record, and is lost the moment the call ends. A website turns that traffic into something the school owns:</p>
+
+<table>
+  <thead><tr><th style="width:34%">What happens today</th><th>What the website changes</th></tr></thead>
+  <tbody>
+    <tr><td>A parent phones to ask about fees, the bus route or when the term starts.</td><td>They read it on the site at 9 pm, and only call when they are ready to apply.</td></tr>
+    <tr><td>An enquiry is written on a notepad and followed up if someone remembers.</td><td>The enquiry lands in the system as a record with a name, a phone number and a status, and is followed up because it appears on a list.</td></tr>
+    <tr><td>An application form is collected from the gate, filled by hand, and re-typed by the registrar.</td><td>The parent applies online; the application appears in the Admissions pipeline ready for review — no re-typing, no lost forms.</td></tr>
+    <tr><td>Parents ask the office for a fee balance or a report card.</td><td>They sign in to the portal and see it themselves, any time.</td></tr>
+    <tr><td>Newsletters and notices are printed and sent home with the child.</td><td>They are published once and reach every parent by web, e-mail and SMS.</td></tr>
+    <tr><td>A prospective parent Googles the school and finds nothing, or a Facebook page from 2019.</td><td>The school is the first, authoritative result — and is the source that AI assistants quote when asked about it.</td></tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <h4>The single most important principle in this document</h4>
+  <p style="margin:0">The website is <strong>not a second system</strong>. It is a public face on the system the school already runs. Term dates, fee structures, notices, transport routes and the admissions pipeline all live in the management system; the website reads from it and writes back into it. Anything that is typed twice will, sooner or later, disagree with itself.</p>
+</div>
+
+<h3>Objectives, in the order they matter</h3>
+<ol>
+  <li><strong>Convert enquiries into applications.</strong> Every page should make the next step obvious: enquire, book a tour, or apply.</li>
+  <li><strong>Answer the repeated questions</strong> — fees, term dates, uniform, transport, entry requirements — so the office answers fewer of them.</li>
+  <li><strong>Serve the parents the school already has</strong>: notices, calendar, results, fee statements, payments.</li>
+  <li><strong>Present the school honestly and well</strong> to families, to the Ministry, and to prospective staff.</li>
+  <li><strong>Be legible to machines</strong> — search engines and AI assistants — because that is increasingly how parents find a school.</li>
+</ol>
+
+<h3>Who the website is for</h3>
+<table>
+  <thead><tr><th style="width:22%">Audience</th><th style="width:38%">What they came for</th><th>What we must give them</th></tr></thead>
+  <tbody>
+    <tr><td><strong>Prospective parent</strong></td><td>Is this school right for my child, can I afford it, how do I apply?</td><td>Curriculum, results, fees, photos, an honest tour, a short application form.</td></tr>
+    <tr><td><strong>Current parent</strong></td><td>When does term end? Is the bus running? What is my balance?</td><td>Calendar, notices, and one obvious <em>Parent Portal</em> button.</td></tr>
+    <tr><td><strong>Student</strong></td><td>Timetable, results, clubs, library.</td><td>Portal sign-in and student life pages.</td></tr>
+    <tr><td><strong>Prospective staff</strong></td><td>Are there vacancies, and what is it like to work here?</td><td>Careers page with an application form.</td></tr>
+    <tr><td><strong>Ministry, partners, suppliers</strong></td><td>Registration details, leadership, contacts, tenders.</td><td>About, governance, procurement, contact.</td></tr>
+    <tr><td><strong>Search engines &amp; AI assistants</strong></td><td>Facts about the school.</td><td>Structured, machine-readable data (section&nbsp;9).</td></tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+<h2 style="margin-top:0">2. Contents</h2>
+<nav class="toc">
+  <ol>
+    <li>Why the school needs this website</li>
+    <li>Contents</li>
+    <li>Sitemap and page inventory
+      <ol><li>Public pages</li><li>URL conventions</li></ol></li>
+    <li>Page-by-page functionality
+      <ol><li>Home</li><li>About &amp; governance</li><li>Academics</li><li>Admissions</li><li>Fees &amp; payments</li><li>Student life</li><li>School services — transport, boarding, library</li><li>News, notices &amp; events</li><li>Gallery &amp; media</li><li>Careers</li><li>Contact &amp; enquiries</li><li>Downloads &amp; policies</li></ol></li>
+    <li>Portals — the parent, student and staff doors</li>
+    <li>Online admissions, end to end</li>
+    <li>Enquiries: the form that must never lose a lead</li>
+    <li>Integration with the management system</li>
+    <li>Making the site AI-friendly and findable</li>
+    <li>Accessibility, language and inclusion</li>
+    <li>Content: who writes what, and what we need from the school</li>
+    <li>Who can edit the site (roles and workflow)</li>
+    <li>Technical approach, hosting and cost</li>
+    <li>Security, privacy and child protection</li>
+    <li>Measuring whether it works</li>
+    <li>Delivery plan and phases</li>
+    <li>Launch checklist</li>
+    <li>Appendix A — Enquiry and application field lists</li>
+    <li>Appendix B — Structured data examples</li>
+    <li>Appendix C — Decisions needed from the school</li>
+  </ol>
+</nav>
+
+<h2>3. Sitemap and page inventory</h2>
+<h3>3.1 Public pages</h3>
+<p>Seven items in the main menu. Anything more and parents stop reading it. Everything else is reachable from a page or the footer.</p>
+
+<pre>
+Home
+├─ About Us
+│   ├─ Our Story &amp; Mission              ├─ Leadership &amp; Governance
+│   ├─ Our Team (teaching &amp; support)     ├─ Accreditation &amp; Registration
+│   └─ Campus &amp; Facilities               └─ Careers
+├─ Academics
+│   ├─ Pre-Primary (PP1–PP2)             ├─ Upper Primary (Grade 4–6)
+│   ├─ Lower Primary (Grade 1–3)         ├─ Junior Secondary (Grade 7–9)
+│   ├─ Subjects &amp; Electives              ├─ Assessment &amp; Reporting (CBC)
+│   └─ Academic Calendar &amp; Term Dates    └─ Examination Results
+├─ Admissions                             ★ the commercial heart of the site
+│   ├─ Why Green Valley                   ├─ Entry Requirements by Grade
+│   ├─ How to Apply (4 steps)             ├─ Apply Online  ➜ feeds the MIS pipeline
+│   ├─ Fees &amp; Payment Options             ├─ Book a School Tour
+│   ├─ Scholarships &amp; Bursaries           └─ Admissions FAQ
+├─ Student Life
+│   ├─ Clubs &amp; Societies                  ├─ Sports &amp; Games
+│   ├─ Music, Drama &amp; Arts                ├─ Boarding Life
+│   ├─ Counselling &amp; Wellbeing            ├─ School Bus &amp; Routes
+│   └─ Library                            └─ A Day at Green Valley
+├─ News &amp; Events
+│   ├─ Latest News                        ├─ Events Calendar
+│   ├─ Notices to Parents                 ├─ Newsletters (archive)
+│   └─ Gallery (photos &amp; video)           └─ Achievements
+├─ Contact
+│   ├─ Find Us (map, directions)          ├─ Make an Enquiry
+│   ├─ Departments &amp; Direct Lines         └─ Visit Us
+└─ Portal  ➜  sign-in for parents, students and staff
+
+Footer: Downloads · Policies (Privacy, Safeguarding, Anti-Bullying) · Term Dates ·
+        Fee Structure · Alumni · Procurement/Tenders · Sitemap · Social links
+</pre>
+
+<h3>3.2 URL conventions</h3>
+<p>Short, lower-case, hyphenated, never changing. The URL is quoted in letters and posters for years; a URL that breaks is a lost parent.</p>
+<table>
+  <thead><tr><th style="width:42%">URL</th><th>Page</th></tr></thead>
+  <tbody>
+    <tr><td><code>/</code></td><td>Home</td></tr>
+    <tr><td><code>/admissions</code></td><td>Admissions overview</td></tr>
+    <tr><td><code>/admissions/apply</code></td><td>Online application form</td></tr>
+    <tr><td><code>/admissions/fees</code></td><td>Fee structure and payment options</td></tr>
+    <tr><td><code>/admissions/tour</code></td><td>Book a school tour</td></tr>
+    <tr><td><code>/academics/junior-secondary</code></td><td>One page per education level</td></tr>
+    <tr><td><code>/academics/calendar</code></td><td>Term dates, published from the MIS</td></tr>
+    <tr><td><code>/news/&lt;year&gt;/&lt;slug&gt;</code></td><td>A news article</td></tr>
+    <tr><td><code>/events/&lt;slug&gt;</code></td><td>An event with date, venue and RSVP</td></tr>
+    <tr><td><code>/transport</code></td><td>Routes, stops and times</td></tr>
+    <tr><td><code>/contact</code></td><td>Contact and enquiry form</td></tr>
+    <tr><td><code>/portal</code></td><td>Redirect to the parent/student portal sign-in</td></tr>
+    <tr><td><code>/downloads/&lt;slug&gt;.pdf</code></td><td>Fee structure, calendar, uniform list, policies</td></tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+<h2 style="margin-top:0">4. Page-by-page functionality</h2>
+<p class="small muted">Priority key: <span class="pill">P1</span> launch &nbsp; <span class="pill p2">P2</span> soon after &nbsp; <span class="pill p3">P3</span> later &nbsp; <span class="pill ai">AI</span> machine-readable content.</p>
+
+<h3>4.1 Home <span class="pill">P1</span></h3>
+<p>A visitor decides in about eight seconds whether to keep reading. The home page must answer <em>what kind of school is this, for which ages, where, and what do I do next</em> — above the fold, before any scrolling.</p>
+<ul>
+  <li><strong>Hero</strong> — one strong photograph of real children on the real campus, the school name and motto (“Knowledge, Character, Excellence”), and two buttons: <em>Apply Online</em> and <em>Book a Tour</em>.</li>
+  <li><strong>Quick-answer strip</strong> — Pre-Primary to Junior Secondary · Day &amp; Boarding · CBC curriculum · Kiambu Road, Nairobi. Four facts, no prose.</li>
+  <li><strong>Why families choose us</strong> — four to six cards, each a claim with evidence (class size, teacher qualifications, results, facilities).</li>
+  <li><strong>Levels at a glance</strong> — four tiles linking to the level pages, each with the age range and a one-line promise.</li>
+  <li><strong>Latest news &amp; notices</strong> <span class="pill ai">AI</span> — three most recent items, pulled live from the MIS announcements so nobody has to copy them.</li>
+  <li><strong>Upcoming dates</strong> — next three calendar events, from the MIS academic calendar.</li>
+  <li><strong>Parent Portal</strong> — a prominent panel: check fees, results, attendance. Signed-in parents should never have to hunt for it.</li>
+  <li><strong>Proof</strong> — parent and alumni testimonials with names and photos (with consent), plus accreditation marks.</li>
+  <li><strong>Closing call to action</strong> — enquiry form inline (name, phone, child’s grade) so nobody has to navigate to contact us.</li>
+  <li><strong>Footer</strong> — address, map, phone, e-mail, office hours, paybill, social links, policy links.</li>
+</ul>
+
+<h3>4.2 About &amp; governance <span class="pill">P1</span></h3>
+<ul>
+  <li><strong>Our story and mission</strong> — founding, philosophy, values, what the school is deliberately <em>not</em>.</li>
+  <li><strong>Leadership</strong> — Principal’s welcome (photo, signature, 200 words), Deputy/Registrar, Board of Directors or Trustees, PTA chair.</li>
+  <li><strong>Our team</strong> — teaching staff with photo, subject and qualification; support staff by department. <span class="muted small">Can be generated from HR records; individual consent required before a photo is published.</span></li>
+  <li><strong>Accreditation &amp; registration</strong> <span class="pill ai">AI</span> — Ministry registration <code>MOE/PS/2016/1187</code>, licence <code>PRI/2016/00417</code>, KNEC centre number, associations. Parents and the Ministry both look for these.</li>
+  <li><strong>Campus &amp; facilities</strong> — classrooms, science and computer labs, library, dining hall, dormitories, playing fields, sick bay, bus fleet; photographs and a short walkthrough video.</li>
+  <li><strong>Safeguarding statement</strong> — child protection policy, staff vetting, visitor rules, CCTV, gate procedure. Increasingly the first thing a careful parent reads.</li>
+</ul>
+
+<h3>4.3 Academics <span class="pill">P1</span></h3>
+<ul>
+  <li><strong>One page per level</strong> (Pre-Primary, Lower Primary, Upper Primary, Junior Secondary): ages, typical day, learning areas, class sizes, assessment, transition to the next level, the teachers, the fees for that level, and a call to apply.</li>
+  <li><strong>Subjects &amp; electives</strong> — the learning areas offered, which are core and which are chosen, drawn from the subject list in the MIS so the website cannot drift from what is actually taught.</li>
+  <li><strong>Assessment &amp; reporting (CBC)</strong> — how continuous assessment, exams and competency bands work; what a report card looks like (sample, anonymised); when results are published; how parents access them <em>(link to the portal)</em>.</li>
+  <li><strong>Academic calendar</strong> <span class="pill ai">AI</span> — term dates, half-terms, exam weeks, closing and opening days, published straight from the MIS. One source, one truth. Downloadable as PDF and subscribable as a calendar feed (<code>.ics</code>) so it lands in a parent’s phone.</li>
+  <li><strong>Results &amp; achievements</strong> — school-level performance, national exam outcomes, competition results. Never individual pupils’ marks.</li>
+  <li><strong>Homework &amp; reading policy</strong>, book lists per grade (PDF).</li>
+</ul>
+
+<h3>4.4 Admissions <span class="pill">P1</span> — the commercial heart of the site</h3>
+<p>Treat this as the school’s shop window. Everything else exists to bring a parent here.</p>
+<ul>
+  <li><strong>How to apply</strong> — four numbered steps with realistic timelines: <em>1. Enquire or tour → 2. Apply online → 3. Assessment &amp; interview → 4. Offer, acceptance and reporting day.</em></li>
+  <li><strong>Entry requirements per grade</strong> — age on 1 January, documents required (birth certificate, previous report, transfer letter, immunisation card, NEMIS/assessment number, passport photos), what a transfer needs.</li>
+  <li><strong>Apply online</strong> — the form itself (section 6 and Appendix A). Saves progress, accepts document uploads, works on a phone.</li>
+  <li><strong>Intakes &amp; deadlines</strong> — when the school takes new pupils, when places typically fill, waiting-list policy.</li>
+  <li><strong>Fees for applicants</strong> — full fee structure, what is included, what is extra, payment plans, the application fee and whether it is refundable.</li>
+  <li><strong>Scholarships &amp; bursaries</strong> — what exists, who qualifies, how to apply, deadline, and how decisions are communicated.</li>
+  <li><strong>Book a tour</strong> — a date/time picker showing the school’s open slots; confirmation by e-mail and SMS; a reminder the day before; the visit recorded in the MIS.</li>
+  <li><strong>Admissions FAQ</strong> <span class="pill ai">AI</span> — twenty real questions with direct answers. This page will attract more search traffic than any other and is what AI assistants will quote.</li>
+  <li><strong>Talk to the registrar</strong> — name, photo, direct line, WhatsApp, and office hours. Admissions is a human decision; parents want a person.</li>
+</ul>
+
+<h3>4.5 Fees &amp; payments <span class="pill">P1</span></h3>
+<ul>
+  <li><strong>Published fee structure</strong> per level and per term: tuition, boarding, lunch, transport, activity, examination and one-off charges, with a clear note on what is compulsory and what is optional. Generated from the MIS fee structure, so the published figure is the figure that will be invoiced.</li>
+  <li><strong>Payment options</strong> — M-Pesa paybill <code>522533</code> with the child’s admission number as the account, bank transfer details, banker’s cheque, and the instalment plan.</li>
+  <li><strong>Fee calculator</strong> <span class="pill p2">P2</span> — pick a grade, boarder or day, bus route and options; see the termly and annual total. Removes the most common phone call the bursar receives.</li>
+  <li><strong>Discounts</strong> — sibling discount, early-payment discount, bursaries: stated plainly with the conditions.</li>
+  <li><strong>Pay now</strong> — a button that takes a signed-in parent to the portal, where an M-Pesa STK push can be sent to their own phone for their own child.</li>
+  <li><strong>Fee policy</strong> — due dates, what happens when fees are late, refunds on withdrawal, and who to talk to about difficulty paying.</li>
+</ul>
+
+<h3>4.6 Student life <span class="pill p2">P2</span></h3>
+<ul>
+  <li><strong>A day at Green Valley</strong> — an hour-by-hour walkthrough for a day scholar and for a boarder. Parents picture their own child in it.</li>
+  <li><strong>Clubs &amp; societies</strong>, <strong>sports</strong>, <strong>music, drama and arts</strong> — what is offered per term, who runs it, photographs, and results.</li>
+  <li><strong>Boarding life</strong> — the houses, dormitories and beds, the warden, the weekly routine, prep times, visiting days, exeat rules, what to pack (downloadable list), meals and the menu cycle.</li>
+  <li><strong>Counselling &amp; wellbeing</strong> — the counsellor, the sick bay and nurse, medical procedures, how a parent is contacted in an emergency, the anti-bullying policy.</li>
+  <li><strong>Student leadership</strong> — the council, prefects, service and community projects.</li>
+</ul>
+
+<h3>4.7 School services — transport, boarding, library <span class="pill p2">P2</span></h3>
+<p>These three pages exist because the management system already holds the data; publishing them costs almost nothing and answers a great many phone calls.</p>
+<ul>
+  <li><strong>Transport</strong> <span class="pill ai">AI</span> — every route with its stops, pick-up and drop-off times, the termly fare, the buses and their capacity, and the rules (a child is released only to a named adult, a change of stop needs a written request). Fed live from the transport module, so a route change is published the moment the transport office makes it.</li>
+  <li><strong>Boarding</strong> — the houses, what a dormitory looks like, the kit list, laundry, prep and lights-out, visiting days.</li>
+  <li><strong>Library</strong> — opening hours, borrowing rules (how many books, for how long, what a late return costs), the reading programme, and <span class="pill p3">P3</span> a public catalogue search so a pupil can check whether a title is on the shelf before walking over.</li>
+</ul>
+
+<h3>4.8 News, notices &amp; events <span class="pill">P1</span> <span class="pill ai">AI</span></h3>
+<ul>
+  <li><strong>News</strong> — articles with a photograph, author, date and category; tags per level so a Grade 3 parent can filter to what concerns them.</li>
+  <li><strong>Notices to parents</strong> — published from the MIS announcements. Write once in the system; it reaches the website, e-mail and SMS together.</li>
+  <li><strong>Events calendar</strong> — month and list views, each event with date, time, venue, audience, and where relevant an RSVP; downloadable <code>.ics</code> and subscribable.</li>
+  <li><strong>Newsletters</strong> — a browsable archive of termly newsletters as PDFs.</li>
+  <li><strong>Achievements</strong> — academic, sporting and arts results as they happen. This is the content that makes a school look alive.</li>
+  <li><strong>Emergency banner</strong> — a red strip across every page for a closure, a change of reporting date or a security notice, switched on from the MIS in one click. Rarely used, indispensable when needed.</li>
+</ul>
+
+<h3>4.9 Gallery &amp; media <span class="pill p2">P2</span></h3>
+<ul>
+  <li>Albums by event and term; images compressed and served responsively so they open quickly on a phone with a weak signal.</li>
+  <li>Video: campus tour, sports day, music festival, the Principal’s welcome.</li>
+  <li><strong>Consent register</strong> — no child’s photograph is published without a recorded parental consent, and the consent flag lives on the pupil’s record in the MIS. A parent can withdraw consent at any time and the image comes down.</li>
+  <li>A virtual 360° tour <span class="pill p3">P3</span> — valuable for families abroad or upcountry.</li>
+</ul>
+
+<h3>4.10 Careers <span class="pill p2">P2</span></h3>
+<ul>
+  <li>Current vacancies with role, subject, level, contract type, closing date and the full description.</li>
+  <li>An online application form with CV and certificate upload, feeding the HR recruitment list rather than an inbox.</li>
+  <li>Why work here: professional development, benefits, staff testimonials.</li>
+  <li>A speculative-application form for when there are no vacancies, and TSC/child-protection requirements stated up front.</li>
+</ul>
+
+<h3>4.11 Contact &amp; enquiries <span class="pill">P1</span></h3>
+<ul>
+  <li>Address, an embedded map with driving directions and a landmark, office hours, and the main lines.</li>
+  <li><strong>Direct lines by department</strong> — Admissions, Bursar, Transport, Boarding, Head Teacher — so a caller reaches the right desk first time.</li>
+  <li><strong>Enquiry form</strong> (section 7) — the most important form on the site after the application.</li>
+  <li>WhatsApp business link, because that is how most Kenyan parents prefer to ask a quick question.</li>
+  <li>A map of where the school buses run, for families deciding whether the location works.</li>
+</ul>
+
+<h3>4.12 Downloads &amp; policies <span class="pill">P1</span></h3>
+<p>One page, everything a parent is ever asked to “collect from the office”: fee structure, term dates, uniform and kit lists, book lists, boarding packing list, medical form, consent forms, transport request, transfer request, privacy policy, safeguarding policy, anti-bullying policy, code of conduct, parent handbook.</p>
+
+<div class="page-break"></div>
+<h2 style="margin-top:0">5. Portals — the parent, student and staff doors</h2>
+<p>The website is public; the portal is personal. The site’s job is to get the right person to the right door in one click, and never to duplicate what is behind it.</p>
+
+<table>
+  <thead><tr><th style="width:24%">Door</th><th style="width:32%">Link</th><th>Who, and what they see</th></tr></thead>
+  <tbody>
+    <tr>
+      <td><strong>Parent &amp; Student Portal</strong></td>
+      <td><a href="https://school-mgmt-sage.vercel.app/portal">school-mgmt-sage.vercel.app/portal</a></td>
+      <td>Timetable · marks and published report cards · attendance · fee statement and <em>Pay with M-Pesa</em> · announcements · bus route, stop and times · boarding house and bed · library books out and any fines. A parent with several children switches between them.</td>
+    </tr>
+    <tr>
+      <td><strong>Sign in</strong></td>
+      <td><a href="https://school-mgmt-sage.vercel.app/login">school-mgmt-sage.vercel.app/login</a></td>
+      <td>The single sign-in for every role. Where the <em>Portal</em> button in the header leads.</td>
+    </tr>
+    <tr>
+      <td><strong>Staff Self Service</strong></td>
+      <td><a href="https://school-mgmt-sage.vercel.app/dashboard">school-mgmt-sage.vercel.app/dashboard</a></td>
+      <td>Payslips, P9, leave, imprests and requisitions; teachers additionally get My Classes — today’s lessons, registers and marks entry; drivers get their bus and work tickets.</td>
+    </tr>
+    <tr>
+      <td><strong>Apply online</strong></td>
+      <td><code>/admissions/apply</code></td>
+      <td>Public, no account needed. Writes into the school’s admissions pipeline.</td>
+    </tr>
+    <tr>
+      <td><strong>Check my application</strong></td>
+      <td><code>/admissions/status</code> <span class="pill p2">P2</span></td>
+      <td>Application number + phone number returns the current stage — no login, no phone call to the registrar.</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="box">
+  <h4>Where the portal button belongs</h4>
+  <p style="margin:0">Top-right of the header on every page, visually distinct from the menu, labelled <strong>Parent Portal</strong> (not “Login”, which reads as staff-only); repeated in the footer and as a panel on the home page. When the eventual domain is in place it should also answer at <code>portal.greenvalley.ac.ke</code>, which is short enough to say over the phone.</p>
+</div>
+
+<h2>6. Online admissions, end to end</h2>
+<p>This is the single highest-value function on the website. The flow below is designed so that a parent on a phone, with a patchy connection, can finish it in one sitting — and so the registrar never re-types anything.</p>
+
+<h3>The parent’s journey</h3>
+<ol>
+  <li><strong>Start</strong> — grade applying for, intake term and year, how they heard about the school.</li>
+  <li><strong>The child</strong> — names, date of birth (with an immediate check against the grade’s age requirement), gender, nationality, current school, last grade completed, day or boarding, any medical or learning needs.</li>
+  <li><strong>Parents / guardians</strong> — primary guardian’s name, relationship, phone, e-mail, ID number, occupation, address; a second guardian optional; the phone number is verified with an SMS code, which alone removes most junk applications.</li>
+  <li><strong>Documents</strong> — birth certificate, most recent report card, transfer letter, immunisation card, passport photograph. Uploaded as photos from the phone; the form says plainly which are required now and which may follow.</li>
+  <li><strong>Options</strong> — transport (with the route and stop chosen from the live route list), boarding, lunch, electives where relevant.</li>
+  <li><strong>Declaration &amp; consent</strong> — truth of information, acceptance of the data-protection notice, consent (or refusal) for photography.</li>
+  <li><strong>Application fee</strong> <span class="pill p2">P2</span> — optional M-Pesa STK push at submission; the receipt is attached to the application.</li>
+  <li><strong>Submit</strong> — the parent receives an application number on screen, by SMS and by e-mail, with what happens next and when to expect it.</li>
+</ol>
+
+<h3>What happens on the school’s side</h3>
+<ul>
+  <li>The application appears in <strong>Admissions</strong> in the management system as <em>New</em>, with its documents attached — no re-keying.</li>
+  <li>The registrar moves it through the pipeline: <em>New → Under review → Assessment/Interview booked → Offered → Accepted → Admitted</em> (or <em>Waiting list</em> / <em>Declined</em>).</li>
+  <li>Each move can notify the parent by SMS and e-mail automatically, with the message text kept in the system rather than in someone’s head.</li>
+  <li>On <strong>Admit</strong>, the system creates the pupil, issues the admission number, opens the fee account, places the child in a class, and — where chosen — assigns the bus route and the hostel bed. The website form and the school roll are the same record from beginning to end.</li>
+</ul>
+
+<div class="box warn">
+  <h4>Design rules that decide whether the form is finished or abandoned</h4>
+  <ul style="margin:0">
+    <li>Four short steps with a visible progress bar, never one long page.</li>
+    <li>Everything saves as it is typed; a resume link is sent by SMS so an interrupted parent can return.</li>
+    <li>Ask only what is needed to decide. Everything else can be collected at reporting.</li>
+    <li>Phone-number and date fields formatted for Kenya; the whole form usable one-handed on a mid-range Android.</li>
+    <li>Uploads accept photographs of documents, not just scans, and compress them client-side.</li>
+    <li>Plain-language errors next to the field, never a single failure message at the top.</li>
+    <li>A printable version for the rare parent who still prefers paper — the same fields, so the registrar can type it in once.</li>
+  </ul>
+</div>
+
+<h2>7. Enquiries: the form that must never lose a lead</h2>
+<p>Most visitors are not ready to apply. The enquiry form captures them anyway, and its only job is to be short.</p>
+<ul>
+  <li><strong>Five fields</strong>: parent’s name, phone, e-mail (optional), child’s grade of interest, and the question. Anything more reduces completion.</li>
+  <li>It appears on the home page, the admissions page, every level page and the contact page — the same form, remembering which page it came from.</li>
+  <li>On submit: an immediate thank-you with the expected response time, an SMS confirmation to the parent, an instant notification to the admissions desk, and a record created in the system with a status of <em>New</em>.</li>
+  <li>Enquiries are worked as a list — <em>New → Contacted → Tour booked → Applied → Enrolled → Lost</em> — so the school can see, at the end of a term, how many enquiries the website produced and how many became pupils.</li>
+  <li>Spam is kept out with an invisible check rather than a puzzle a parent has to solve.</li>
+  <li>An enquiry that goes untouched for 48 hours should raise a flag. A lead left for a week is a lead lost to another school.</li>
+</ul>
+
+<div class="page-break"></div>
+<h2 style="margin-top:0">8. Integration with the management system</h2>
+<p>Everything below already exists in the school’s system. The website reads it through a small, read-only public interface, and writes back only through the two public forms.</p>
+
+<table>
+  <thead><tr><th style="width:26%">Website element</th><th style="width:24%">Source in the MIS</th><th style="width:16%">Direction</th><th>Effect</th></tr></thead>
+  <tbody>
+    <tr><td>Notices &amp; news feed</td><td>Announcements</td><td>read</td><td>Published once, appears on the site, by e-mail and by SMS.</td></tr>
+    <tr><td>Term dates &amp; calendar</td><td>Academic years and terms</td><td>read</td><td>Dates can never contradict the school’s own calendar.</td></tr>
+    <tr><td>Fee structure &amp; calculator</td><td>Fee items and structures</td><td>read</td><td>The published fee is the fee that will be invoiced.</td></tr>
+    <tr><td>Subjects and electives</td><td>Subject setup</td><td>read</td><td>Curriculum pages stay true to what is taught.</td></tr>
+    <tr><td>Transport routes page</td><td>Transport routes and stops</td><td>read</td><td>A route change is public immediately.</td></tr>
+    <tr><td>Library catalogue search <span class="pill p3">P3</span></td><td>Library titles and copies</td><td>read</td><td>Availability shown without exposing borrowers.</td></tr>
+    <tr><td>Staff directory</td><td>Employees (consented only)</td><td>read</td><td>New teacher appears once HR records them.</td></tr>
+    <tr><td><strong>Online application</strong></td><td>Admission applications</td><td><strong>write</strong></td><td>Lands in the pipeline; on admission becomes a pupil, a fee account and a class place.</td></tr>
+    <tr><td><strong>Enquiry &amp; tour booking</strong></td><td>Enquiry list / calendar</td><td><strong>write</strong></td><td>Followed up on a list, measured at term end.</td></tr>
+    <tr><td>Careers application <span class="pill p2">P2</span></td><td>HR recruitment</td><td><strong>write</strong></td><td>Applicants ranked in one place, not an inbox.</td></tr>
+    <tr><td>Portal links</td><td>Portal</td><td>link</td><td>No duplicate login on the website.</td></tr>
+  </tbody>
+</table>
+
+<div class="box ok">
+  <h4>Rules for the join</h4>
+  <ul style="margin:0">
+    <li>The public interface is <strong>read-only</strong> except for applications, enquiries and job applications, each of which is rate-limited and validated.</li>
+    <li>It exposes <strong>no personal data</strong> — no pupil names, no marks, no balances. Those live behind the portal sign-in.</li>
+    <li>Website pages are cached for a few minutes; notices and the emergency banner refresh immediately on publish.</li>
+    <li>If the management system is briefly unreachable the website still serves its last good copy. A parent must never see an error because an internal system is restarting.</li>
+  </ul>
+</div>
+
+<h2>9. Making the site AI-friendly and findable</h2>
+<p>Parents increasingly ask an AI assistant before they ask Google, and assistants answer from sites they can parse. A site built as below is quoted accurately; a site of images and PDFs is skipped or, worse, guessed about.</p>
+
+<h3>9.1 Structured data</h3>
+<ul>
+  <li><strong>School</strong> on the home page: legal name, registration numbers, address with coordinates, phone, e-mail, curriculum, ages served, opening hours (Appendix B).</li>
+  <li><strong>FAQPage</strong> on the admissions and fees FAQs — the format assistants quote most readily.</li>
+  <li><strong>Event</strong> on every calendar entry; <strong>NewsArticle</strong> on every article; <strong>JobPosting</strong> on every vacancy; <strong>BreadcrumbList</strong> site-wide.</li>
+  <li>A <code>sitemap.xml</code> that updates itself, and an <code>llms.txt</code> at the root summarising the school and pointing to the pages an assistant should read first.</li>
+</ul>
+
+<h3>9.2 Writing for both readers</h3>
+<ul>
+  <li>Every fact a parent might ask for exists as <strong>text</strong>, not only inside an image or a PDF. A fee structure that exists only as a scan is invisible to search and to assistants.</li>
+  <li>One clear question per heading — “How much are fees for Grade 7?” outperforms “Financial Information”.</li>
+  <li>Dates written in full (“Term 2 begins on Monday 4 May 2026”), never “next term”.</li>
+  <li>Each page states plainly who it is for and what to do next.</li>
+  <li>Descriptive alt text on every image; real captions, not file names.</li>
+</ul>
+
+<h3>9.3 A school assistant on the website <span class="pill p2">P2</span></h3>
+<p>A chat box, bottom-right, that answers from the school’s own published content — fees, term dates, entry requirements, routes, uniform — and nothing else. It must:</p>
+<ul>
+  <li>Answer only from the website and the public MIS data, and say “I don’t know, let me connect you to the office” rather than invent;</li>
+  <li>Offer to capture an enquiry when it cannot answer, so the conversation still becomes a lead;</li>
+  <li>Never discuss an individual pupil — that belongs behind the portal sign-in;</li>
+  <li>Hand over to WhatsApp or a phone number during office hours;</li>
+  <li>Keep a transcript the admissions office can read, which is also the best possible list of what the website should explain better.</li>
+</ul>
+
+<h3>9.4 Search visibility</h3>
+<ul>
+  <li>Target the phrases parents actually type: “private school Kiambu Road”, “CBC junior secondary Nairobi boarding”, “school fees Grade 7 Nairobi”.</li>
+  <li>A Google Business Profile with photographs, hours and reviews, consistent with the site to the letter.</li>
+  <li>Fast on a phone: under three seconds on 3G, images compressed, nothing that blocks the first paint.</li>
+  <li>Correct titles and descriptions per page, and social preview cards so a shared link looks like the school and not a bare URL.</li>
+</ul>
+
+<h2>10. Accessibility, language and inclusion</h2>
+<ul>
+  <li><strong>WCAG 2.2 AA</strong> as the standard: contrast, keyboard navigation, focus that is visible, labelled forms, captioned video, headings in order.</li>
+  <li><strong>Phone first.</strong> Most parents will only ever see the site on a phone; design for that screen and let the desktop follow.</li>
+  <li><strong>Low bandwidth.</strong> Pages must be usable on a slow connection — compressed images, no autoplaying video, no heavy fonts.</li>
+  <li><strong>Language.</strong> English throughout, with Kiswahili for the pages that matter most to every parent — admissions, fees, term dates, contact. <span class="pill p2">P2</span></li>
+  <li><strong>Print.</strong> Fee structure, calendar and application pages must print cleanly on A4 — many parents still keep a folder.</li>
+  <li><strong>Plain language.</strong> Short sentences, no internal jargon, no acronym without its expansion.</li>
+</ul>
+
+<div class="page-break"></div>
+<h2 style="margin-top:0">11. Content: who writes what</h2>
+<p>Websites are delayed by missing content far more often than by missing code. This list should be assigned to named people with dates before development begins.</p>
+
+<table>
+  <thead><tr><th style="width:30%">Item</th><th style="width:22%">Who provides it</th><th>Notes</th></tr></thead>
+  <tbody>
+    <tr><td>Principal’s welcome (200 words) + photo</td><td>Principal</td><td>Signed, warm, specific to this school.</td></tr>
+    <tr><td>Mission, vision, values, history</td><td>Board / Principal</td><td>Half a page each.</td></tr>
+    <tr><td>Leadership and board profiles</td><td>Principal’s office</td><td>Photo, role, one-paragraph biography.</td></tr>
+    <tr><td>Staff list with qualifications</td><td>HR</td><td>From employee records; consent for photographs.</td></tr>
+    <tr><td>Level pages (4)</td><td>Deputy / Heads of level</td><td>A day in the level, learning areas, class size.</td></tr>
+    <tr><td>Fee structure per level</td><td>Bursar</td><td>Published from the system; approve the wording.</td></tr>
+    <tr><td>Term dates for the year</td><td>Registrar</td><td>Already in the system; confirm and publish.</td></tr>
+    <tr><td>Entry requirements and document list</td><td>Registrar</td><td>Per grade.</td></tr>
+    <tr><td>Twenty admissions FAQs</td><td>Registrar + Bursar</td><td>Take them from the questions actually asked at the counter.</td></tr>
+    <tr><td>Photography (campus, classrooms, sport, boarding, labs, buses)</td><td>Professional shoot</td><td>Half a day; the single biggest lift in perceived quality.</td></tr>
+    <tr><td>Campus video / virtual tour</td><td>Videographer <span class="pill p2">P2</span></td><td>Two to three minutes.</td></tr>
+    <tr><td>Testimonials (4–6)</td><td>PTA / alumni</td><td>Name, photo, written consent.</td></tr>
+    <tr><td>Policies: privacy, safeguarding, anti-bullying, code of conduct</td><td>Board</td><td>Legal review before publication.</td></tr>
+    <tr><td>Uniform, book and boarding kit lists</td><td>Deputy / Matron</td><td>As text on the page, plus a PDF.</td></tr>
+    <tr><td>Transport routes and fares</td><td>Transport office</td><td>Already in the system; confirm.</td></tr>
+    <tr><td>Results and achievements</td><td>Academics office</td><td>School-level only, never individual pupils.</td></tr>
+  </tbody>
+</table>
+
+<h2>12. Who can edit the site</h2>
+<table>
+  <thead><tr><th style="width:22%">Role</th><th style="width:34%">Can change</th><th>Cannot change</th></tr></thead>
+  <tbody>
+    <tr><td>Principal / Administrator</td><td>Everything, including publishing policies and the emergency banner</td><td>—</td></tr>
+    <tr><td>Communications officer</td><td>News, events, gallery, newsletters</td><td>Fees, policies, admissions rules</td></tr>
+    <tr><td>Registrar</td><td>Admissions pages, FAQs, entry requirements, calendar</td><td>Fees, staff records</td></tr>
+    <tr><td>Bursar</td><td>Fee pages and payment instructions</td><td>Academic content</td></tr>
+    <tr><td>HR</td><td>Careers and staff directory</td><td>Everything else</td></tr>
+  </tbody>
+</table>
+<ul>
+  <li>Editors work on a <strong>draft</strong> and <em>request publication</em>; a second person publishes. Two pairs of eyes on anything a parent will read.</li>
+  <li>Every change is recorded — who, what, when — and any page can be rolled back.</li>
+  <li>Fee and policy pages require the Principal’s approval before they go live.</li>
+</ul>
+
+<h2>13. Technical approach, hosting and cost</h2>
+<ul>
+  <li><strong>Same technology as the management system</strong> (Next.js, TypeScript, PostgreSQL) so one team maintains both and the join between them is direct rather than bolted on.</li>
+  <li><strong>Content management</strong> — school staff edit through a simple admin screen, not by editing code. Pages, news, events, gallery and downloads are all editable; layout and structure are not.</li>
+  <li><strong>Hosting</strong> — the same platform as the MIS, with a global CDN, automatic HTTPS and daily backups. No server for the school to look after.</li>
+  <li><strong>Domain</strong> — <code>greenvalley.ac.ke</code> for the website and <code>portal.greenvalley.ac.ke</code> for the portal, with e-mail on the school’s own domain.</li>
+  <li><strong>Performance budget</strong> — first meaningful paint under 2.5 s on 3G; every image compressed and sized; the site works with JavaScript disabled for the pages that only present information.</li>
+  <li><strong>Environments</strong> — a staging site the school reviews before anything reaches the public one.</li>
+</ul>
+
+<table>
+  <thead><tr><th style="width:36%">Recurring cost</th><th style="width:24%">Indicative</th><th>Note</th></tr></thead>
+  <tbody>
+    <tr><td>Domain (.ac.ke)</td><td>~KSh 2,000 / year</td><td>Registered in the school’s name, not a vendor’s.</td></tr>
+    <tr><td>Hosting &amp; CDN</td><td>Free tier → ~KSh 3,000 / month</td><td>Shared with the MIS; the free tier carries a school this size comfortably.</td></tr>
+    <tr><td>Transactional e-mail</td><td>Free tier → ~KSh 2,500 / month</td><td>Confirmations and notices.</td></tr>
+    <tr><td>SMS</td><td>~KSh 0.80 / message</td><td>Already in use by the MIS.</td></tr>
+    <tr><td>Photography / video</td><td>One-off</td><td>The highest-return line in this table.</td></tr>
+    <tr><td>Maintenance &amp; content support</td><td>Retainer or in-house</td><td>A site nobody updates ages faster than no site at all.</td></tr>
+  </tbody>
+</table>
+
+<h2>14. Security, privacy and child protection</h2>
+<ul>
+  <li><strong>Kenya Data Protection Act, 2019</strong> — a plain-English privacy notice, a lawful basis for every form, a named data-protection contact, and a retention rule for unsuccessful applications (suggested: 12 months, then deletion).</li>
+  <li><strong>Children’s data is treated as sensitive.</strong> No pupil name, photograph, mark or balance is ever public; all of it sits behind the portal sign-in.</li>
+  <li><strong>Photographic consent</strong> is recorded per child and is respected by the gallery automatically; withdrawal takes effect immediately.</li>
+  <li><strong>Forms</strong> are rate-limited, validated on the server, protected from spam, and their uploads are scanned and type-restricted.</li>
+  <li><strong>Transport</strong> — HTTPS everywhere, HSTS, secure headers, no third-party script that has not been reviewed.</li>
+  <li><strong>Payments</strong> — the school never handles card data; M-Pesa is initiated from the portal and confirmed by Safaricom’s callback.</li>
+  <li><strong>Safeguarding</strong> — no staff or pupil personal phone numbers published; a clear route for reporting a concern; the safeguarding policy public.</li>
+  <li><strong>Backups and recovery</strong> — daily, tested, with a stated recovery time; and an annual review of who still has editing access.</li>
+</ul>
+
+<h2>15. Measuring whether it works</h2>
+<table>
+  <thead><tr><th style="width:38%">Measure</th><th style="width:22%">Target in year one</th><th>Why it matters</th></tr></thead>
+  <tbody>
+    <tr><td>Online applications per intake</td><td>60% of all applications</td><td>The clearest return on the investment.</td></tr>
+    <tr><td>Enquiries per month</td><td>20+</td><td>The top of the admissions funnel.</td></tr>
+    <tr><td>Enquiry → application conversion</td><td>30%</td><td>Tests the admissions pages and the follow-up.</td></tr>
+    <tr><td>Application form completion rate</td><td>70%+</td><td>Below this, the form is too long.</td></tr>
+    <tr><td>Portal sign-ins per parent per term</td><td>3+</td><td>Fewer calls to the office.</td></tr>
+    <tr><td>Calls answered by the website</td><td>Down 30%</td><td>Ask the office; they will know before the analytics do.</td></tr>
+    <tr><td>Mobile share of visits</td><td>Expect 75–85%</td><td>Confirms where to spend design effort.</td></tr>
+    <tr><td>Search position for “private school Kiambu Road”</td><td>First page</td><td>Visibility to families nearby.</td></tr>
+  </tbody>
+</table>
+<p class="small muted">Privacy-respecting analytics (no advertising trackers), reviewed with the admissions office once a term — not left to accumulate unread.</p>
+
+<div class="page-break"></div>
+<h2 style="margin-top:0">16. Delivery plan</h2>
+<table>
+  <thead><tr><th style="width:12%">Phase</th><th style="width:16%">Duration</th><th style="width:38%">Delivers</th><th>Dependencies</th></tr></thead>
+  <tbody>
+    <tr><td><strong>0 — Discovery</strong></td><td>1 week</td><td>Content inventory, photography brief, sitemap and wireframes signed off, domain secured.</td><td>Decisions in Appendix C.</td></tr>
+    <tr><td><strong>1 — Foundation</strong></td><td>2 weeks</td><td>Design system in the school’s colours, page framework, CMS, hosting, staging site.</td><td>Logo and brand assets.</td></tr>
+    <tr><td><strong>2 — Core pages</strong></td><td>2 weeks</td><td>Home, About, four level pages, Contact, Downloads, portal links, enquiry form.</td><td>Written content, photographs.</td></tr>
+    <tr><td><strong>3 — Admissions</strong></td><td>2 weeks</td><td>Admissions pages, the online application, tour booking, FAQs, MIS pipeline integration.</td><td>Entry requirements, fee structure.</td></tr>
+    <tr><td><strong>4 — Live content</strong></td><td>1 week</td><td>News, notices, calendar, transport and fee data fed from the MIS; emergency banner.</td><td>Public read interface.</td></tr>
+    <tr><td><strong>5 — Polish &amp; launch</strong></td><td>1 week</td><td>Accessibility audit, performance tuning, structured data, staff training, launch.</td><td>Sign-off.</td></tr>
+    <tr><td><strong>6 — After launch</strong></td><td>Ongoing</td><td>Careers, gallery, Kiswahili pages, fee calculator, website assistant, library catalogue, virtual tour.</td><td>Measured demand.</td></tr>
+  </tbody>
+</table>
+<p><strong>Eight to nine weeks</strong> to a public launch, assuming content and photographs arrive on time. Content is almost always the constraint, so phase 0 starts with names against every item in section 11.</p>
+
+<h2>17. Launch checklist</h2>
+<div class="grid2">
+  <div class="card">
+    <h4>Content</h4>
+    <ul class="small" style="margin:0">
+      <li>Every page proofread by two people</li>
+      <li>Fees, term dates and requirements verified against the system</li>
+      <li>No placeholder text or stock photo left</li>
+      <li>Consent recorded for every face published</li>
+      <li>Policies legally reviewed</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Function</h4>
+    <ul class="small" style="margin:0">
+      <li>Application submitted end-to-end on a real phone</li>
+      <li>Enquiry reaches the office and the parent gets the SMS</li>
+      <li>Portal links land on the right sign-in</li>
+      <li>Every form tested with wrong input</li>
+      <li>Emergency banner switched on and off</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>Technical</h4>
+    <ul class="small" style="margin:0">
+      <li>HTTPS, redirects, 404 page</li>
+      <li>Sitemap and llms.txt live; search console verified</li>
+      <li>Backups running and restore tested</li>
+      <li>Under 3 s on 3G; accessibility audit passed</li>
+      <li>Analytics recording</li>
+    </ul>
+  </div>
+  <div class="card">
+    <h4>People</h4>
+    <ul class="small" style="margin:0">
+      <li>Editors trained; a one-page guide printed</li>
+      <li>Admissions desk knows where enquiries land</li>
+      <li>Someone named as responsible for the site</li>
+      <li>Domain and hosting in the school’s own accounts</li>
+      <li>Launch announced by SMS, WhatsApp and assembly</li>
+    </ul>
+  </div>
+</div>
+
+<h2>Appendix A — Field lists</h2>
+<h4>Enquiry form (5 fields — resist adding a sixth)</h4>
+<p class="small">Parent’s name * · Phone * · E-mail · Grade of interest * · Message. Hidden: source page, date, UTM parameters.</p>
+<h4>Online application</h4>
+<table class="small">
+  <thead><tr><th style="width:22%">Step</th><th>Fields (* required)</th></tr></thead>
+  <tbody>
+    <tr><td>1. Application</td><td>Grade applying for * · Intake term and year * · Day or boarding * · How did you hear about us?</td></tr>
+    <tr><td>2. The child</td><td>First, middle and last name * · Date of birth * · Gender * · Nationality * · Birth-certificate number · Religion · Current school · Last grade completed · Reason for transfer · Medical conditions, allergies, medication · Special educational needs</td></tr>
+    <tr><td>3. Parents / guardians</td><td>Primary: full name * · relationship * · phone (SMS-verified) * · e-mail · national ID * · occupation · employer · postal and physical address *<br>Secondary (optional): name · relationship · phone · e-mail<br>Emergency contact: name * · relationship * · phone *</td></tr>
+    <tr><td>4. Options &amp; documents</td><td>Transport: route and stop · Boarding preference · Lunch · Electives (where applicable)<br>Uploads: birth certificate * · latest report card * · transfer letter · immunisation card · passport photograph *</td></tr>
+    <tr><td>Declaration</td><td>Information is true * · Data-protection notice accepted * · Photography consent (yes / no) * · Signature (typed name) * · Date *</td></tr>
+  </tbody>
+</table>
+<h4>Tour booking</h4>
+<p class="small">Parent’s name * · Phone * · E-mail · Number of visitors * · Preferred date and slot (from available times) * · Grade of interest * · Anything you would like to see.</p>
+
+<h2>Appendix B — Structured data example</h2>
+<pre>&lt;script type="application/ld+json"&gt;
+{
+  "@context": "https://schema.org",
+  "@type": "School",
+  "name": "Nairobi Green Valley Academy",
+  "alternateName": "Green Valley Academy",
+  "slogan": "Knowledge, Character, Excellence",
+  "url": "https://greenvalley.ac.ke",
+  "logo": "https://greenvalley.ac.ke/logo.png",
+  "telephone": "+254 700 100 200",
+  "email": "info@greenvalley.ac.ke",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Green Valley Road, off Kiambu Road",
+    "postalCode": "00100",
+    "addressLocality": "Nairobi",
+    "addressRegion": "Nairobi County",
+    "addressCountry": "KE"
+  },
+  "identifier": [
+    { "@type": "PropertyValue", "name": "MoE Registration", "value": "MOE/PS/2016/1187" },
+    { "@type": "PropertyValue", "name": "Licence", "value": "PRI/2016/00417" }
+  ],
+  "educationalCredentialAwarded": "Kenya Competency Based Curriculum (CBC)",
+  "numberOfStudents": 128,
+  "foundingDate": "2016",
+  "openingHours": "Mo-Fr 07:00-17:00",
+  "sameAs": ["https://facebook.com/...", "https://instagram.com/..."]
+}
+&lt;/script&gt;</pre>
+<p class="small muted">Comparable blocks: <code>FAQPage</code> on the FAQs, <code>Event</code> on calendar entries, <code>NewsArticle</code> on articles, <code>JobPosting</code> on vacancies.</p>
+
+<h2>Appendix C — Decisions needed from the school</h2>
+<ol>
+  <li><strong>Domain</strong> — confirm <code>greenvalley.ac.ke</code> is registered in the school’s name, and agree the portal address.</li>
+  <li><strong>Fee publication</strong> — publish the full fee structure openly, or show it only after an enquiry? <span class="muted">(Recommendation: publish. Parents distrust a school that hides its fees, and the office fields fewer calls.)</span></li>
+  <li><strong>Application fee</strong> — charged at submission, or on acceptance of an offer?</li>
+  <li><strong>Photography consent</strong> — the wording, and whether existing pupils need to be re-consented before launch.</li>
+  <li><strong>Who owns the website</strong> — name the person responsible for content, and the person who approves publication.</li>
+  <li><strong>Kiswahili pages</strong> — required at launch, or phase 6?</li>
+  <li><strong>Website assistant</strong> — approve in principle, and agree what it must never discuss.</li>
+  <li><strong>Staff directory</strong> — publish photographs and qualifications, or names and roles only?</li>
+  <li><strong>Tour slots</strong> — which days and times the school will commit to.</li>
+  <li><strong>Response-time promise</strong> — what the site tells a parent to expect after an enquiry. <span class="muted">(One working day is credible and achievable.)</span></li>
+</ol>
+
+<footer>
+  Nairobi Green Valley Academy · Green Valley Road, off Kiambu Road · P.O. Box 30871–00100, Nairobi ·
+  +254 700 100 200 · info@greenvalley.ac.ke<br>
+  Website functional proposal, 22 September 2026 — prepared for review by the Board and Senior Management.
+  Parent &amp; student portal: school-mgmt-sage.vercel.app/portal
+</footer>
+
+</body>
+</html>
