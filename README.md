@@ -52,7 +52,7 @@ npm run db:reset    # DESTROYS every web_ table and rebuilds — needs CONFIRM_R
 | Variable | What it is for |
 |---|---|
 | `DATABASE_URL` | PostgreSQL. **Required.** |
-| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Image uploads. Without them the admin still runs; the upload fields say so. |
+| `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` | Image and news attachment uploads. Without them the admin still runs; the upload fields say so. |
 | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME` | The same cloud name, for building delivery URLs in the browser. |
 | `CLOUDINARY_FOLDER` | Where uploads land. Defaults to `school-website`. |
 | `NEXT_PUBLIC_SITE_URL` | This site's own address — canonical URLs, the sitemap, Open Graph tags. |

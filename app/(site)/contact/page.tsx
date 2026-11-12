@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getGrades, getStaff } from '@/lib/site.ts';
@@ -42,16 +43,14 @@ export default async function ContactPage() {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Contact</div>
           <h1>Contact us</h1>
           <p className="lead">
             {school.office_hours ?? 'The office is open 7 am – 5 pm, Monday to Friday.'} We answer every enquiry within
             one working day.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">

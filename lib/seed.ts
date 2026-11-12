@@ -18,6 +18,7 @@ import { dirname, join } from 'node:path';
 import { all, exec, one, run, value } from './db.ts';
 import { hashPassword } from './password.ts';
 import { expandActionsToLines, STANDARD_ROLES } from './permissions.ts';
+import { schoolPhotos } from './school-photos.ts';
 import { slugify } from './slugify.ts';
 
 const HERE = dirname(fileURLToPath(import.meta.url));
@@ -40,22 +41,18 @@ const at = (date: Date, hour: number, minute = 0): string => {
 };
 const dateOnly = (date: Date): string => date.toISOString().slice(0, 10);
 
-/* Unsplash photographs, used only as placeholder content. Replace them from the admin by
- * uploading the school's own — every one of these fields takes a Cloudinary upload. */
-const photo = (id: string, w = 1600): string => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&w=${w}&q=75`;
-
-const CAMPUS = photo('1580582932707-520aed937b7b');
-const CLASSROOM = photo('1503676260728-1c00da094a0b');
-const SCIENCE = photo('1532094349884-543bc11b234d');
-const LIBRARY = photo('1481627834876-b7833e8f5570');
-const SPORT = photo('1461896836934-ffe607ba8211');
-const MUSIC = photo('1514320291840-2e0a9bf2a9ae');
-const BUS = photo('1544620347-c4fd4a3d5957');
-const GRADUATION = photo('1523050854058-8df90110c9f1');
-const CHILDREN = photo('1509062522246-3755977927d7');
-const ART = photo('1499951360447-b19be8fe80f5');
-const COMPUTER = photo('1497633762265-9d179a990aa6');
-const ASSEMBLY = photo('1577896851231-70ef18881754');
+const CAMPUS = schoolPhotos.campus.url;
+const CLASSROOM = schoolPhotos.classroom.url;
+const SCIENCE = schoolPhotos.science.url;
+const LIBRARY = schoolPhotos.library.url;
+const SPORT = schoolPhotos.sport.url;
+const MUSIC = schoolPhotos.music.url;
+const BUS = schoolPhotos.bus.url;
+const GRADUATION = schoolPhotos.graduation.url;
+const CHILDREN = schoolPhotos.children.url;
+const ART = schoolPhotos.art.url;
+const COMPUTER = schoolPhotos.computer.url;
+const ASSEMBLY = schoolPhotos.assembly.url;
 
 export interface SeedResult {
   created: string[];
@@ -369,22 +366,22 @@ export async function seedDatabase(options: { demo?: boolean } = {}): Promise<Se
   if (await isEmpty('web_album')) {
     const albums: [title: string, description: string, cover: string, photos: [url: string, caption: string][]][] = [
       ['Around the campus', 'The buildings, the fields and the twenty-year-old jacaranda in the middle of it all.', CAMPUS, [
-        [CAMPUS, 'The main block from the front lawn'],
-        [CLASSROOM, 'A Lower Primary classroom, mid-morning'],
-        [LIBRARY, 'The new library wing'],
-        [SCIENCE, 'The science laboratory'],
-        [COMPUTER, 'The computer laboratory'],
-        [BUS, 'The fleet, waiting for the afternoon run'],
+        [CAMPUS, schoolPhotos.campus.caption],
+        [CLASSROOM, schoolPhotos.classroom.caption],
+        [LIBRARY, schoolPhotos.library.caption],
+        [SCIENCE, schoolPhotos.science.caption],
+        [COMPUTER, schoolPhotos.computer.caption],
+        [BUS, schoolPhotos.bus.caption],
       ]],
       ['Sports day', 'Nine records in one afternoon, and Kilimanjaro House with the shield.', SPORT, [
-        [SPORT, 'The Grade 8 girls’ 800 metres'],
-        [CHILDREN, 'Pre-Primary sack race — no records broken'],
-        [ASSEMBLY, 'The march past'],
+        [SPORT, schoolPhotos.sport.caption],
+        [CHILDREN, schoolPhotos.children.caption],
+        [ASSEMBLY, schoolPhotos.assembly.caption],
       ]],
       ['Music and drama festival', 'Four hundred parents, one hall and a brass section that did not exist a year ago.', MUSIC, [
-        [MUSIC, 'The choir opening the evening'],
-        [ART, 'Set design by the Grade 6 class'],
-        [GRADUATION, 'Curtain call'],
+        [MUSIC, schoolPhotos.music.caption],
+        [ART, schoolPhotos.art.caption],
+        [GRADUATION, schoolPhotos.graduation.caption],
       ]],
     ];
 

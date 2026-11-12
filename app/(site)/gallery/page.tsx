@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getAlbums, getSettings } from '@/lib/site.ts';
@@ -20,16 +21,14 @@ export default async function GalleryPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Gallery</div>
           <h1>Photo gallery</h1>
           <p className="lead">
             {total ? `${total} photographs across ${albums.length} album${albums.length === 1 ? '' : 's'} — ` : ''}
             the school grounds, the classrooms, the fields and the days that are worth remembering.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap">

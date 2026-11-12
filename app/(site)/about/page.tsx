@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getLevels, getStaff, getRoutes, getTestimonials, getAlbums } from '@/lib/site.ts';
@@ -33,13 +34,11 @@ export default async function AboutPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero images={[cover]}>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>About</div>
           <h1>About {school.short_name ?? school.name}</h1>
           {school.motto ? <p className="lead">&ldquo;{school.motto}&rdquo; is not a slogan we print on a wall — it is the order we teach in.</p> : null}
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">

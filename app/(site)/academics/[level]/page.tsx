@@ -1,3 +1,4 @@
+import { Hero } from '../../hero.tsx';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -39,8 +40,7 @@ export default async function LevelPage({ params }: Params) {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero images={[level.image_url]}>
           <div className="crumbs">
             <Link href="/">Home</Link><span aria-hidden="true">›</span>
             <Link href="/academics">Academics</Link><span aria-hidden="true">›</span>
@@ -49,8 +49,7 @@ export default async function LevelPage({ params }: Params) {
           <h1>{level.name}</h1>
           <p className="lead">{level.tagline ?? level.grades.map((grade) => grade.name).join(' · ')}</p>
           {level.age_note ? <p className="tiny muted">Entry age: {level.age_note}</p> : null}
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">

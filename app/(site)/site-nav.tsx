@@ -130,29 +130,6 @@ export function SiteNav({ groups, portalUrl, portalLabel }: { groups: NavGroup[]
 }
 
 /**
- * The way into the admin: "sign in" for a visitor, "dashboard" for a member of staff who is already
- * signed in. Rendered as the sign-in link, then corrected once the session check answers.
- */
-export function StaffLink({ className, signInLabel, signedInLabel }: { className?: string; signInLabel: string; signedInLabel: string }) {
-  const [signedIn, setSignedIn] = useState(false);
-
-  useEffect(() => {
-    let live = true;
-    fetch('/admin/session', { cache: 'no-store', credentials: 'same-origin' })
-      .then((response) => (response.ok ? response.json() : null))
-      .then((data: { signedIn?: boolean } | null) => { if (live && data?.signedIn) setSignedIn(true); })
-      .catch(() => { /* offline or blocked — the sign-in link still works */ });
-    return () => { live = false; };
-  }, []);
-
-  return (
-    <Link href={signedIn ? '/admin' : '/admin/login'} className={className}>
-      {signedIn ? signedInLabel : signInLabel}
-    </Link>
-  );
-}
-
-/**
  * Adds `data-scrolled` to the sticky header once the page has moved, which is what turns on its
  * border and shadow. A class rather than inline style so the stylesheet keeps the whole
  * appearance in one place.
@@ -161,10 +138,24 @@ export function ScrollWatcher({ target }: { target: string }) {
   useEffect(() => {
     const header = document.querySelector<HTMLElement>(target);
     if (!header) return;
+    const site = header.closest<HTMLElement>('.site');
+    const topbar = site?.querySelector<HTMLElement>(':scope > .topbar');
+    const measure = () => {
+      const height = header.getBoundingClientRect().height + (topbar?.getBoundingClientRect().height ?? 0);
+      site?.style.setProperty('--site-header-height', `${height}px`);
+    };
+    const observer = new ResizeObserver(measure);
+    observer.observe(header);
+    if (topbar) observer.observe(topbar);
+    measure();
+
     const onScroll = () => header.setAttribute('data-scrolled', String(window.scrollY > 8));
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', onScroll);
+    };
   }, [target]);
   return null;
 }

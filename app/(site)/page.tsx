@@ -6,9 +6,11 @@ import {
 } from '@/lib/site.ts';
 import { formatDate, formatDateShort, dateParts, formatMoney, truncate, initials, telHref } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
+import { homepageHeroImage } from '@/lib/school-photos.ts';
 import { portalUrl, siteUrl } from '@/lib/urls.ts';
 import { EnquiryForm } from './forms.tsx';
 import { Reveal, CountUp } from './site-chrome.tsx';
+import { Hero } from './hero.tsx';
 
 export async function generateMetadata(): Promise<Metadata> {
   const school = await getSettings();
@@ -28,9 +30,8 @@ export default async function HomePage() {
   const today = new Date().toISOString().slice(0, 10);
   const currentTerm = terms.find((t) => t.is_current);
   const nextTerm = terms.find((t) => t.start_date > today);
-  const headline = posts[0];
   const photos = albums.flatMap((album) => album.photos.map((photo) => ({ ...photo, album: album.slug }))).slice(0, 6);
-  const heroImage = school.hero_image_url;
+  const heroImage = homepageHeroImage(school.hero_image_url);
   const portal = portalUrl(school);
   const firstGrade = levels[0]?.grades[0]?.name;
   const lastGrade = levels[levels.length - 1]?.grades.at(-1)?.name;
@@ -47,7 +48,7 @@ export default async function HomePage() {
     email: school.email ?? undefined,
     telephone: school.phone_primary ?? undefined,
     url: siteUrl(),
-    image: heroImage ?? undefined,
+    image: cdn(heroImage) || undefined,
     foundingDate: school.founded_year ?? undefined,
     address: {
       '@type': 'PostalAddress',
@@ -70,19 +71,9 @@ export default async function HomePage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* ------------------------------------------------------------------ hero */}
-      <section className="hero">
-        {heroImage ? (
-          <img className="hero-bg" src={cdn(heroImage, { width: 2000, height: 1100 })} alt="" fetchPriority="high" />
-        ) : null}
-        <div className="wrap hero-grid">
-          <div>
-            {headline ? (
-              <Link href={`/news/${headline.slug}`} className="hero-badge">
-                <b>Latest</b>
-                <span>{truncate(headline.title, 58)}</span>
-              </Link>
-            ) : null}
-
+      <Hero home>
+        <div className="wrap">
+          <div className="hero-copy">
             <h1>{school.hero_headline ?? school.motto ?? `Welcome to ${school.name}`}</h1>
             <p className="lead">
               {school.hero_body
@@ -90,41 +81,37 @@ export default async function HomePage() {
             </p>
 
             <div className="btn-row">
-              <Link href="/admissions/apply" className="btn btn-accent">Apply online</Link>
+              <Link href="/admissions/apply" className="btn hero-apply">Apply online <span aria-hidden="true">→</span></Link>
               <Link href="/admissions/tour" className="btn btn-light">Book a visit</Link>
             </div>
-
-            <div className="hero-facts">
-              {school.stat_students ? <div className="hero-fact"><b>{school.stat_students}</b><span>pupils on the roll</span></div> : null}
-              {school.stat_teachers ? <div className="hero-fact"><b>{school.stat_teachers}</b><span>qualified teachers</span></div> : null}
-              <div className="hero-fact"><b>{levels.length}</b><span>levels, {gradeSpan}</span></div>
-              <div className="hero-fact"><b>{levels.reduce((n, level) => n + level.grades.length, 0)}</b><span>grades taught</span></div>
-              <div className="hero-fact"><b>CBC</b><span>Competency Based Curriculum</span></div>
-            </div>
           </div>
+        </div>
+      </Hero>
 
-          <div className="hero-card">
+      <section className="section-tight section-soft">
+        <div className="wrap home-essentials">
+          <div>
             {portal ? (
               <>
-                <h3>Already a parent here?</h3>
+                <h2>Parent Portal</h2>
                 <p className="small muted">
                   Fee statements, results, attendance and your child&rsquo;s bus route — all in the portal, at any hour.
                 </p>
-                <a href={portal} className="btn btn-primary btn-block">Open the Parent Portal</a>
+                <a href={portal} className="text-link">Open the Parent Portal</a>
               </>
             ) : (
               <>
-                <h3>Talk to the school office</h3>
+                <h2>School office</h2>
                 <p className="small muted">
                   {school.office_hours ?? 'The office is open on weekdays.'} Call us, or pay us a visit and see the school at work.
                 </p>
-                {school.phone_primary ? <a href={telHref(school.phone_primary)} className="btn btn-primary btn-block">Call {school.phone_primary}</a> : null}
+                {school.phone_primary ? <a href={telHref(school.phone_primary)} className="text-link">Call {school.phone_primary}</a> : null}
               </>
             )}
 
-            <hr />
-
-            <h3>Term dates</h3>
+          </div>
+          <div>
+            <h2>Term dates</h2>
             {currentTerm ? (
               <p className="small" style={{ margin: 0 }}>
                 <strong>{currentTerm.name} {currentTerm.year_name}</strong> runs {formatDate(currentTerm.start_date)} – {formatDate(currentTerm.end_date)}.

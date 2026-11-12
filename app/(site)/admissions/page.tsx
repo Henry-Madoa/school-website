@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getLevels, getTerms, getGrades, getFaqs, getLowestTermFee } from '@/lib/site.ts';
@@ -42,8 +43,7 @@ export default async function AdmissionsPage() {
     <>
       {jsonLd ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /> : null}
 
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Admissions</div>
           <h1>Admissions</h1>
           <p className="lead">
@@ -55,8 +55,7 @@ export default async function AdmissionsPage() {
             <Link href="/admissions/tour" className="btn btn-ghost">Book a visit</Link>
             <Link href="/admissions/fees" className="btn btn-ghost">Fee structure</Link>
           </div>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap">

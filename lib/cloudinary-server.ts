@@ -9,7 +9,8 @@ import 'server-only';
  * Cloudinary does the rest — format negotiation, resizing and the CDN — so nothing in this
  * application has to store or serve a binary.
  */
-import { v2 as cloudinary, type UploadApiResponse } from 'cloudinary';
+import { randomUUID } from 'node:crypto';
+import { v2 as cloudinary, type UploadApiOptions, type UploadApiResponse } from 'cloudinary';
 import { AppError } from './errors.ts';
 
 const MAX_BYTES = 8 * 1024 * 1024; // 8 MB — a photograph straight off a phone.
@@ -46,6 +47,38 @@ export interface Uploaded {
   bytes: number;
 }
 
+async function uploadFile(file: File, options: UploadApiOptions): Promise<UploadApiResponse> {
+  configure();
+  const bytes = Buffer.from(await file.arrayBuffer());
+  return new Promise((resolve, reject) => {
+    cloudinary.uploader.upload_stream(options, (error, uploaded) => {
+      if (error || !uploaded) return reject(new AppError(error?.message ?? 'The upload failed. Please try again.', 'CONFIG'));
+      resolve(uploaded);
+    }).end(bytes);
+  });
+}
+
+export async function uploadAttachment(entry: FormDataEntryValue | null): Promise<string | undefined> {
+  if (!entry || typeof entry === 'string' || entry.size === 0) return undefined;
+
+  const extension = entry.name.toLowerCase().match(/\.(pdf|docx|xlsx|pptx)$/)?.[1];
+  if (!extension) throw new AppError('Choose a PDF, Word, Excel or PowerPoint file.', 'VALIDATION');
+  if (entry.size > MAX_BYTES) throw new AppError('Choose an attachment of 8 MB or less.', 'VALIDATION');
+
+  const signature = Buffer.from(await entry.slice(0, 5).arrayBuffer());
+  const valid = extension === 'pdf'
+    ? signature.toString('ascii') === '%PDF-'
+    : signature.subarray(0, 4).equals(Buffer.from([0x50, 0x4b, 0x03, 0x04]));
+  if (!valid) throw new AppError('That attachment does not match its file type.', 'VALIDATION');
+
+  const result = await uploadFile(entry, {
+    folder: `${ROOT_FOLDER}/attachments`,
+    resource_type: 'raw',
+    public_id: `${randomUUID()}.${extension}`,
+  });
+  return result.secure_url;
+}
+
 /**
  * Uploads one image from a Server Action's FormData.
  *
@@ -59,25 +92,11 @@ export async function uploadImage(entry: FormDataEntryValue | null | undefined, 
   if (!file.type.startsWith('image/')) throw new AppError('That file is not an image. Upload a JPEG, PNG or WebP.', 'VALIDATION');
   if (file.size > MAX_BYTES) throw new AppError(`That image is ${(file.size / 1_048_576).toFixed(1)} MB. Please upload one under 8 MB.`, 'VALIDATION');
 
-  configure();
-  const bytes = Buffer.from(await file.arrayBuffer());
-
-  const result = await new Promise<UploadApiResponse>((resolve, reject) => {
-    cloudinary.uploader
-      .upload_stream(
-        {
-          folder: `${ROOT_FOLDER}/${folder}`,
-          resource_type: 'image',
-          // Nothing the school publishes needs to be larger than this, and the originals off a
-          // camera are frequently ten times it.
-          transformation: [{ width: 2400, height: 2400, crop: 'limit' }, { quality: 'auto', fetch_format: 'auto' }],
-        },
-        (error, uploaded) => {
-          if (error || !uploaded) return reject(new AppError(error?.message ?? 'The upload failed. Please try again.', 'CONFIG'));
-          resolve(uploaded);
-        },
-      )
-      .end(bytes);
+  const result = await uploadFile(file, {
+    folder: `${ROOT_FOLDER}/${folder}`,
+    resource_type: 'image',
+    // Limit originals from cameras before storing them.
+    transformation: [{ width: 2400, height: 2400, crop: 'limit' }, { quality: 'auto', fetch_format: 'auto' }],
   });
 
   return { url: result.secure_url, publicId: result.public_id, width: result.width, height: result.height, bytes: result.bytes };

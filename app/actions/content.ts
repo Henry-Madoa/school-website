@@ -18,7 +18,7 @@
 import { revalidatePath } from 'next/cache';
 import { requireAction } from '@/lib/auth.ts';
 import { actionResult } from '@/lib/errors.ts';
-import { uploadImage, uploadImages } from '@/lib/cloudinary-server.ts';
+import { uploadAttachment, uploadImage, uploadImages } from '@/lib/cloudinary-server.ts';
 import * as content from '@/lib/content.ts';
 import * as inbox from '@/lib/inbox.ts';
 import type { ActionResult } from '@/lib/types.ts';
@@ -47,12 +47,13 @@ export async function savePost(_prev: unknown, form: FormData): Promise<ActionRe
     const actor = await requireAction(editing ? 'NEWS_UPDATE' : 'NEWS_CREATE');
 
     const uploaded = await uploadImage(form.get('image'), 'news');
+    const attachment = await uploadAttachment(form.get('attachment'));
     const input: content.PostInput = {
       title: form.get('title'),
       category: form.get('category'),
       excerpt: form.get('excerpt'),
       body: form.get('body'),
-      attachmentUrl: form.get('attachment_url'),
+      attachmentUrl: attachment ?? (form.get('remove_attachment') === '1' ? null : undefined),
       isPublished: form.get('is_published'),
       isPinned: form.get('is_pinned'),
       publishedAt: form.get('published_at'),

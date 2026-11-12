@@ -15,6 +15,7 @@ import 'server-only';
  */
 import { cache } from 'react';
 import { all, one } from './db.ts';
+import { findStockSchoolPhoto } from './school-photos.ts';
 import type {
   Album, AlbumView, EventView, Faq, Fee, Grade, Level, LevelView, Photo,
   Post, RouteView, Settings, Staff, Stop, Subject, Term, Testimonial,
@@ -135,16 +136,37 @@ export const getEvent = (slug: string): Promise<EventView | undefined> =>
 
 /* ---------------------------------------------------------------------- gallery */
 
-export async function getAlbums(): Promise<AlbumView[]> {
+const legacyDemoCaptions = new Set([
+  'The main block from the front lawn',
+  'A Lower Primary classroom, mid-morning',
+  'The new library wing',
+  'The science laboratory',
+  'The computer laboratory',
+  'The fleet, waiting for the afternoon run',
+  'The Grade 8 girls’ 800 metres',
+  'Pre-Primary sack race — no records broken',
+  'The march past',
+  'The choir opening the evening',
+  'Set design by the Grade 6 class',
+  'Curtain call',
+]);
+
+export const getAlbums = cache(async (): Promise<AlbumView[]> => {
   const [albums, photos] = await Promise.all([
     all<Album>('SELECT * FROM web_album WHERE is_published ORDER BY sort, taken_on DESC NULLS LAST, id DESC'),
     all<Photo>('SELECT * FROM web_photo ORDER BY sort, id'),
   ]);
   return albums.map((album) => {
-    const own = photos.filter((p) => p.album_id === album.id);
-    return { ...album, photos: own, photo_count: own.length, cover_url: album.cover_url ?? own[0]?.url ?? null };
+    const own = photos.filter((p) => p.album_id === album.id).map((item) => {
+      const stock = findStockSchoolPhoto(item.url);
+      if (!stock) return item;
+      const caption = item.caption && legacyDemoCaptions.has(item.caption) ? stock.caption : item.caption;
+      return { ...item, url: stock.url, caption };
+    });
+    const cover = album.cover_url ?? own[0]?.url ?? null;
+    return { ...album, photos: own, photo_count: own.length, cover_url: findStockSchoolPhoto(cover)?.url ?? cover };
   });
-}
+});
 
 export async function getAlbum(slug: string): Promise<AlbumView | undefined> {
   return (await getAlbums()).find((a) => a.slug === slug);

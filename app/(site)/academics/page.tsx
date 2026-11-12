@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getLevels, getTerms } from '@/lib/site.ts';
@@ -23,8 +24,7 @@ export default async function AcademicsPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero images={[levels[0]?.image_url]}>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Academics</div>
           <h1>Academics</h1>
           <p className="lead">
@@ -32,8 +32,7 @@ export default async function AcademicsPage() {
             {levels.length ? `, from ${levels[0]!.name} to ${levels[levels.length - 1]!.name}` : ''}, with qualified
             teaching staff{school.stat_teachers ? ` (${school.stat_teachers} teachers)` : ''} and a small teacher-to-pupil ratio.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap">

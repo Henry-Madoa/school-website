@@ -3,8 +3,9 @@ import Link from 'next/link';
 import { getSettings, getLevels } from '@/lib/site.ts';
 import { telHref, whatsappHref } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
+import { schoolPhotoCredits } from '@/lib/school-photos.ts';
 import { portalUrl } from '@/lib/urls.ts';
-import { SiteNav, ScrollWatcher, StaffLink, type NavGroup } from './site-nav.tsx';
+import { SiteNav, ScrollWatcher, type NavGroup } from './site-nav.tsx';
 import { BackToTop } from './site-chrome.tsx';
 import { NewsletterForm } from './forms.tsx';
 import './site.css';
@@ -104,8 +105,6 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
             {school.youtube_url ? <a href={school.youtube_url} target="_blank" rel="noreferrer" aria-label="YouTube">▶</a> : null}
             {school.x_url ? <a href={school.x_url} target="_blank" rel="noreferrer" aria-label="X">𝕏</a> : null}
           </span>
-          <span className="spacer" />
-          <StaffLink signInLabel="Staff sign-in" signedInLabel="Admin dashboard" />
         </div>
       </div>
 
@@ -234,12 +233,23 @@ export default async function SiteLayout({ children }: { children: ReactNode }) 
                     <a href={portal} target={external(portal) ? '_blank' : undefined} rel="noreferrer">Parent &amp; student portal</a>
                   </li>
                 ) : null}
-                <li><StaffLink signInLabel="Website admin sign-in" signedInLabel="Website admin dashboard" /></li>
                 <li><Link href="/privacy">Privacy notice</Link></li>
               </ul>
             </div>
           </div>
 
+          <details className="photo-credits">
+            <summary>Photo credits</summary>
+            <p>The hero illustrations were generated with AI using <a href={school.facebook_url ?? 'https://www.facebook.com/profile.php?id=61572316880698'}>the school’s Facebook photos</a> as visual reference.</p>
+            <p>Stock photos illustrate school life in Kenya and across Africa. Some are cropped, resized or tinted for display.</p>
+            <ul>
+              {schoolPhotoCredits.map((photo) => (
+                <li key={photo.url}>
+                  <a href={photo.source}>{photo.caption}</a> by {photo.author} · <a href={photo.licenseUrl}>{photo.licenseName}</a>
+                </li>
+              ))}
+            </ul>
+          </details>
           <div className="footer-base">
             <span>© {year} {school.name}. All rights reserved.</span>
             <span className="spacer" />

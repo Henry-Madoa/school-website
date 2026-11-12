@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getStaff } from '@/lib/site.ts';
@@ -20,16 +21,14 @@ export default async function StaffPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span><Link href="/about">About</Link><span aria-hidden="true">›</span>Staff</div>
           <h1>Leadership &amp; staff</h1>
           <p className="lead">
             A school is the people in it. These are the adults your child will see every day — and the office you can
             ring when you need to.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap">

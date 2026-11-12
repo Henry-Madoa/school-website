@@ -1,3 +1,4 @@
+import { Hero } from '../../hero.tsx';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       type: 'article',
       title: event.title,
       description: event.summary ?? undefined,
-      images: event.image_url ? [{ url: event.image_url }] : undefined,
+      images: event.image_url ? [{ url: cdn(event.image_url) }] : undefined,
     },
   };
 }
@@ -63,7 +64,7 @@ export default async function EventPage({ params }: Params) {
     description: event.summary ?? undefined,
     startDate: event.starts_at,
     endDate: event.ends_at ?? undefined,
-    image: event.image_url ?? undefined,
+    image: cdn(event.image_url) || undefined,
     eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
     eventStatus: 'https://schema.org/EventScheduled',
     location: { '@type': 'Place', name: event.location ?? school.name, address: school.physical_address ?? undefined },
@@ -74,8 +75,7 @@ export default async function EventPage({ params }: Params) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="page-head">
-        <div className="wrap">
+      <Hero images={[event.image_url]}>
           <div className="crumbs">
             <Link href="/">Home</Link><span aria-hidden="true">›</span>
             <Link href="/events">What&rsquo;s on</Link><span aria-hidden="true">›</span>
@@ -89,8 +89,7 @@ export default async function EventPage({ params }: Params) {
             {event.location ? ` · ${event.location}` : ''}
             {past ? ' · this has already taken place' : ` · ${relativeDays(event.starts_at)}`}
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">

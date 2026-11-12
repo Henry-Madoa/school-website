@@ -1,3 +1,4 @@
+import { Hero } from '../../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getTerms, getUpcomingEvents } from '@/lib/site.ts';
@@ -36,8 +37,7 @@ export default async function CalendarPage() {
     <>
       {terms.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /> : null}
 
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs">
             <Link href="/">Home</Link><span aria-hidden="true">›</span>
             <Link href="/academics">Academics</Link><span aria-hidden="true">›</span>
@@ -48,8 +48,7 @@ export default async function CalendarPage() {
             Published straight from the school&rsquo;s own calendar, so these are the dates the school actually works to.
             {next ? ` The next term opens on ${formatDate(next.start_date)}.` : ''}
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">

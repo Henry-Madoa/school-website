@@ -15,9 +15,8 @@ const nextConfig: NextConfig = {
   },
 
   experimental: {
-    // Admin forms post their images through Server Actions, so the default 1 MB
-    // body limit is too small for a photograph straight off a phone.
-    serverActions: { bodySizeLimit: "8mb" },
+    // A notice can include an 8 MB photograph and an 8 MB attachment in one multipart request.
+    serverActions: { bodySizeLimit: "17mb" },
   },
 };
 

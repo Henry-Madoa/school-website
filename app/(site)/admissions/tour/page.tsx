@@ -1,3 +1,4 @@
+import { Hero } from '../../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getGrades, getUpcomingEvents } from '@/lib/site.ts';
@@ -16,8 +17,7 @@ export default async function TourPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs">
             <Link href="/">Home</Link><span aria-hidden="true">›</span>
             <Link href="/admissions">Admissions</Link><span aria-hidden="true">›</span>
@@ -28,8 +28,7 @@ export default async function TourPage() {
             Visit on a normal working day, while lessons are running and the playground is full. That tells you more
             about a school than any brochure — and you are welcome to bring your child.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">

@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getRoutes, getAlbums } from '@/lib/site.ts';
@@ -14,7 +15,7 @@ const WEEK: [title: string, body: string][] = [
   ['Computer classes', 'A centre of digital literacy: every pupil learns to use a computer as part of the school week.'],
   ['French', 'A foreign language alongside English and Kiswahili.'],
   ['Clubs and societies', 'Scouts, Music, Poetry and Drama, among others.'],
-  ['Learning beyond the classroom', 'Academic tours that bring lessons to life — most recently to Amboseli National Park.'],
+  ['Learning beyond the classroom', 'Academic tours give pupils a chance to learn outside the classroom. The school shared a video of its Amboseli National Park tour in December 2025.'],
 ];
 
 export default async function StudentLifePage() {
@@ -23,15 +24,13 @@ export default async function StudentLifePage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Student life</div>
           <h1>Student life</h1>
           <p className="lead">
             A holistic education: what happens between the lessons matters as much as the lessons themselves.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">
@@ -84,7 +83,7 @@ export default async function StudentLifePage() {
             <div className="card icon-tile">
               <span className="icon" aria-hidden="true">🦁</span>
               <h3>School trips</h3>
-              <p>Academic tours take learning outside the classroom — the most recent was to Amboseli National Park.</p>
+              <p>Pupils explore the world beyond the classroom on academic tours, including a visit to Amboseli National Park.</p>
             </div>
             <div className="card icon-tile">
               <span className="icon" aria-hidden="true">🚐</span>

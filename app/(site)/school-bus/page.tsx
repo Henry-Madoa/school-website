@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getRoutes, getGrades, getFaqs } from '@/lib/site.ts';
@@ -20,16 +21,14 @@ export default async function TransportPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Transport</div>
           <h1>School transport</h1>
           <p className="lead">
             {routes.length} route{routes.length === 1 ? '' : 's'} and {stops} named stops. The times below are the ones
             the transport office actually works to — not an aspiration.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap">

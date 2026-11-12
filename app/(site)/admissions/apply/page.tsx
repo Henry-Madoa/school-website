@@ -1,3 +1,4 @@
+import { Hero } from '../../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getGrades, getRoutes, getTerms } from '@/lib/site.ts';
@@ -18,8 +19,7 @@ export default async function ApplyPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs">
             <Link href="/">Home</Link><span aria-hidden="true">›</span>
             <Link href="/admissions">Admissions</Link><span aria-hidden="true">›</span>
@@ -30,8 +30,7 @@ export default async function ApplyPage() {
             About ten minutes, and you can do it on a phone. No documents are needed yet — bring those to the placement
             assessment.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">

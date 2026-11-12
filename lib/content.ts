@@ -51,7 +51,7 @@ export const adminPost = (id: number): Promise<Post | undefined> => one<Post>('S
 
 export interface PostInput {
   title: unknown; category: unknown; excerpt: unknown; body: unknown;
-  imageUrl?: string | null; attachmentUrl?: unknown;
+  imageUrl?: string | null; attachmentUrl?: string | null;
   isPublished: unknown; isPinned: unknown; publishedAt: unknown; expiresAt: unknown;
 }
 
@@ -92,9 +92,11 @@ export async function updatePost(id: number, input: PostInput, actor: Actor): Pr
   // The slug is part of a link a parent may already have; it only changes when the title does.
   const slug = row.title === before.title ? before.slug : await uniqueSlug('web_post', row.title, id);
   await run(
-    `UPDATE web_post SET title=?, slug=?, category=?, excerpt=?, body=?, image_url=?, attachment_url=?,
+    `UPDATE web_post SET title=?, slug=?, category=?, excerpt=?, body=?, image_url=?,
+            attachment_url=CASE WHEN ? THEN ? ELSE attachment_url END,
             is_published=?, is_pinned=?, published_at=?, expires_at=?, updated_at=? WHERE id=?`,
-    row.title, slug, row.category, row.excerpt, row.body, input.imageUrl ?? before.image_url, row.attachment_url,
+    row.title, slug, row.category, row.excerpt, row.body, input.imageUrl ?? before.image_url,
+    input.attachmentUrl !== undefined, row.attachment_url,
     row.is_published, row.is_pinned, row.published_at, row.expires_at, now(), id,
   );
   await audit(actor, 'POST_UPDATE', 'web_post', id, { title: row.title, published: row.is_published });

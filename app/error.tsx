@@ -12,7 +12,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
     console.error('[page]', error);
   }, [error]);
 
-  const configuration = /DATABASE_URL|ECONNREFUSED|ETIMEDOUT|relation .* does not exist/i.test(error.message);
+  const configuration = /website database|DATABASE_URL|ECONNREFUSED|ETIMEDOUT|ENOTFOUND|EAI_AGAIN|relation .* does not exist/i.test(error.message);
 
   return (
     <div
@@ -32,7 +32,7 @@ export default function GlobalError({ error, reset }: { error: Error & { digest?
         <h1 style={{ fontSize: 'clamp(1.6rem, 4vw, 2.2rem)', margin: '16px 0 10px' }}>Something went wrong</h1>
         <p style={{ color: '#64748b', marginBottom: 20 }}>
           {configuration
-            ? 'The website cannot reach its database. If you administer this site, check DATABASE_URL and run `npm run db:setup`.'
+            ? 'The website cannot reach its database. If you administer this site, check the database connection and try again.'
             : 'This page could not be loaded. It is usually temporary — please try again.'}
         </p>
         {error.digest ? (

@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import { Plus_Jakarta_Sans, Source_Serif_4 } from 'next/font/google';
 import { getSettings } from '@/lib/site.ts';
+import { cdn } from '@/lib/cloudinary.ts';
+import { homepageHeroImage } from '@/lib/school-photos.ts';
 import { siteUrl } from '@/lib/urls.ts';
 import './globals.css';
 
@@ -49,7 +51,7 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: school.name,
       title: school.name,
       description: school.about_intro ?? undefined,
-      images: school.hero_image_url ? [{ url: school.hero_image_url }] : undefined,
+      images: [{ url: cdn(homepageHeroImage(school.hero_image_url)) }],
       locale: 'en_KE',
     },
     twitter: { card: 'summary_large_image' },

@@ -6,6 +6,8 @@
  * safe to run in a browser bundle.
  */
 
+import { findStockSchoolPhoto } from './school-photos.ts';
+
 const CLOUDINARY_IMAGE = /^https?:\/\/res\.cloudinary\.com\/([^/]+)\/image\/upload\/(.*)$/;
 
 /**
@@ -13,10 +15,10 @@ const CLOUDINARY_IMAGE = /^https?:\/\/res\.cloudinary\.com\/([^/]+)\/image\/uplo
  * Most of this site is read on a phone over a weak connection, and serving a 3 MB photograph
  * straight off a teacher's camera is the single easiest way to make it feel broken.
  *
- * A URL that is not a Cloudinary upload (a seeded Unsplash photo, say) is returned untouched.
+ * Older demo photo URLs resolve to the matching school stock. Other external URLs pass through.
  */
 export function cdn(url: string | null | undefined, opts: { width?: number; height?: number; crop?: 'fill' | 'fit' } = {}): string {
-  const value = String(url ?? '');
+  const value = findStockSchoolPhoto(url)?.url ?? String(url ?? '');
   const match = value.match(CLOUDINARY_IMAGE);
   if (!match) return value;
 

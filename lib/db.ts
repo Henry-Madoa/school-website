@@ -15,13 +15,16 @@
  */
 import { Pool, type PoolClient, type QueryResultRow } from 'pg';
 import { setDefaultResultOrder } from 'node:dns';
+import { getDefaultAutoSelectFamilyAttemptTimeout, setDefaultAutoSelectFamilyAttemptTimeout } from 'node:net';
 
 /*
- * Hosted Postgres (Neon, Supabase) resolves to both IPv4 and IPv6. Where the IPv6 route is dead
- * rather than refused — common on Windows dev machines — every new connection loses tens of
- * seconds to the unreachable candidates before falling back. Skip the race.
+ * Hosted PostgreSQL resolves to IPv4 and IPv6. Prefer IPv4 and give the local Windows preview
+ * more than Node's default per-address timeout to reach a database in another region.
  */
 setDefaultResultOrder('ipv4first');
+if (process.platform === 'win32' && getDefaultAutoSelectFamilyAttemptTimeout() < 1500) {
+  setDefaultAutoSelectFamilyAttemptTimeout(1500);
+}
 
 const globalForDb = globalThis as typeof globalThis & { __websitePool?: Pool };
 
@@ -43,7 +46,7 @@ function createPool(): Pool {
     || /\.(neon\.tech|supabase\.co|render\.com|azure\.com|amazonaws\.com)/.test(connectionString);
   const cleaned = connectionString.replace(/([?&])sslmode=[^&]*(&|$)/, (_m, lead, tail) => (tail ? lead : ''));
 
-  return new Pool({
+  const pool = new Pool({
     connectionString: cleaned,
     ...(needsSsl ? { ssl: { rejectUnauthorized: false } } : {}),
 
@@ -69,6 +72,10 @@ function createPool(): Pool {
     connectionTimeoutMillis: Number(process.env.DB_CONNECT_TIMEOUT_MS) || 20_000,
     keepAlive: true,
   });
+  pool.on('error', (error: NodeJS.ErrnoException) => {
+    console.error('[database] Idle connection closed:', error.code ?? error.message);
+  });
+  return pool;
 }
 
 /** Next reloads server modules on edit, so the pool hangs off globalThis to survive a reload. */
@@ -110,10 +117,24 @@ function isNamedBag(v: unknown): boolean {
 
 /* --------------------------------------------------------------------- queries */
 
+async function databaseOperation<T>(operation: Promise<T>): Promise<T> {
+  try {
+    return await operation;
+  } catch (error) {
+    if (!(error instanceof AggregateError)) throw error;
+
+    // A failed IPv4/IPv6 connection can produce an AggregateError. Pass a plain
+    // error to the page boundary so Next's error overlay can render it.
+    const attempts = (error.errors ?? []) as NodeJS.ErrnoException[];
+    const codes = [...new Set(attempts.map((attempt) => attempt?.code).filter(Boolean))];
+    throw new Error(`Could not connect to the website database${codes.length ? ` (${codes.join(', ')})` : ''}.`);
+  }
+}
+
 /** Every row the query returns. */
 export async function all<T extends QueryResultRow = QueryResultRow>(sql: string, ...args: Arg[]): Promise<T[]> {
   const { text, values } = bind(sql, args);
-  const result = await pool.query<T>(text, values);
+  const result = await databaseOperation(pool.query<T>(text, values));
   return result.rows;
 }
 
@@ -139,19 +160,19 @@ export interface RunResult {
 export async function run(sql: string, ...args: Arg[]): Promise<RunResult> {
   const isInsert = /^\s*insert\s/i.test(sql) && !/\breturning\b/i.test(sql);
   const { text, values } = bind(isInsert ? `${sql.trimEnd().replace(/;$/, '')} RETURNING id` : sql, args);
-  const result = await pool.query(text, values);
+  const result = await databaseOperation(pool.query(text, values));
   const returned = result.rows[0] as { id?: number } | undefined;
   return { id: Number(returned?.id ?? 0), rowCount: result.rowCount ?? 0 };
 }
 
 /** Raw SQL with no placeholder rewriting — for the schema file, which contains `$$` and `::`. */
 export async function exec(sql: string): Promise<void> {
-  await pool.query(sql);
+  await databaseOperation(pool.query(sql));
 }
 
 /** Runs the callback inside a transaction, rolling back on any throw. */
 export async function transaction<T>(fn: (client: PoolClient) => Promise<T>): Promise<T> {
-  const client = await pool.connect();
+  const client = await databaseOperation(pool.connect());
   try {
     await client.query('BEGIN');
     const out = await fn(client);

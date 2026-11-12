@@ -1,3 +1,4 @@
+import { Hero } from '../../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getFees, getRoutes, getFaqs } from '@/lib/site.ts';
@@ -20,8 +21,7 @@ export default async function FeesPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs">
             <Link href="/">Home</Link><span aria-hidden="true">›</span>
             <Link href="/admissions">Admissions</Link><span aria-hidden="true">›</span>
@@ -33,8 +33,7 @@ export default async function FeesPage() {
             hidden charges.
             {term ? ` Shown for ${term.name} ${term.year_name} (${formatDate(term.start_date)} – ${formatDate(term.end_date)}).` : ''}
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap">

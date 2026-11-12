@@ -1,3 +1,4 @@
+import { Hero } from '../../hero.tsx';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -34,8 +35,7 @@ export default async function AlbumPage({ params }: Params) {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero images={[album.cover_url, ...album.photos.slice(0, 2).map((photo) => photo.url)]}>
           <div className="crumbs">
             <Link href="/">Home</Link><span aria-hidden="true">›</span>
             <Link href="/gallery">Gallery</Link><span aria-hidden="true">›</span>
@@ -47,8 +47,7 @@ export default async function AlbumPage({ params }: Params) {
             {album.photo_count} photograph{album.photo_count === 1 ? '' : 's'}
             {album.taken_on ? ` · ${formatDate(album.taken_on)}` : ''}
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap">

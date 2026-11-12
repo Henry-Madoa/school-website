@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings } from '@/lib/site.ts';
@@ -22,13 +23,11 @@ export default async function PrivacyPage() {
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Privacy</div>
           <h1>Privacy notice</h1>
           <p className="lead">How {school.name} handles the personal information you give us through this website.</p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap-narrow prose">

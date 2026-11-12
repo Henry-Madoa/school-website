@@ -1,3 +1,4 @@
+import { Hero } from '../../hero.tsx';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
@@ -22,7 +23,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       title: post.title,
       description: post.excerpt ?? truncate(post.body, 200),
       publishedTime: post.published_at,
-      images: post.image_url ? [{ url: post.image_url }] : undefined,
+      images: post.image_url ? [{ url: cdn(post.image_url) }] : undefined,
     },
   };
 }
@@ -42,7 +43,7 @@ export default async function NoticePage({ params }: Params) {
     datePublished: post.published_at,
     dateModified: post.updated_at ?? post.published_at,
     articleBody: post.body,
-    image: post.image_url ?? undefined,
+    image: cdn(post.image_url) || undefined,
     author: { '@type': 'Organization', name: post.author ?? school.name },
     publisher: { '@type': 'Organization', name: school.name },
   };
@@ -51,8 +52,7 @@ export default async function NoticePage({ params }: Params) {
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
-      <div className="page-head">
-        <div className="wrap">
+      <Hero images={[post.image_url]}>
           <div className="crumbs">
             <Link href="/">Home</Link><span aria-hidden="true">›</span>
             <Link href="/news">News</Link><span aria-hidden="true">›</span>
@@ -65,8 +65,7 @@ export default async function NoticePage({ params }: Params) {
             {post.author ? ` · ${post.author}` : ''}
             {post.expires_at ? ` · applies until ${formatDate(post.expires_at)}` : ''}
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">
@@ -79,9 +78,14 @@ export default async function NoticePage({ params }: Params) {
 
             <div className="prose">
               {post.excerpt ? <p className="lead">{post.excerpt}</p> : null}
-              {post.body.split('\n\n').filter(Boolean).map((paragraph, index) => (
-                <p key={index} style={{ whiteSpace: 'pre-wrap' }}>{paragraph}</p>
-              ))}
+              {post.body.split('\n\n').filter(Boolean).map((paragraph, index) => {
+                const source = /^Source: (https:\/\/\S+)$/.exec(paragraph)?.[1];
+                return (
+                  <p key={index} style={{ whiteSpace: 'pre-wrap' }}>
+                    {source ? <a href={source} className="text-link">View source</a> : paragraph}
+                  </p>
+                );
+              })}
             </div>
 
             {post.attachment_url ? (

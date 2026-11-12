@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { getSettings, getPosts, getTerms, getUpcomingEvents } from '@/lib/site.ts';
@@ -27,7 +28,7 @@ export default async function NewsPage() {
       headline: post.title,
       datePublished: post.published_at,
       articleBody: truncate(post.body, 500),
-      image: post.image_url ?? undefined,
+      image: cdn(post.image_url) || undefined,
       publisher: { '@type': 'Organization', name: school.name },
     })),
   };
@@ -36,16 +37,14 @@ export default async function NewsPage() {
     <>
       {posts.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /> : null}
 
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>News</div>
           <h1>News &amp; notices</h1>
           <p className="lead">
             What is published here is what the school office sends to parents — written once, so nothing gets lost
             between the gate and the group chat.
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap split">

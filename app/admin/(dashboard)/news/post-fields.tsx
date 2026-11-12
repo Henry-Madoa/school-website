@@ -1,4 +1,5 @@
 import { POST_CATEGORIES, type Post } from '@/lib/types.ts';
+import { cloudinaryReady } from '@/lib/cloudinary-server.ts';
 import { ImageField } from '../ui.tsx';
 
 /*
@@ -13,6 +14,7 @@ import { ImageField } from '../ui.tsx';
 const localStamp = (iso: string | null | undefined): string => (iso ? iso.slice(0, 16) : '');
 
 export function PostFields({ post }: { post?: Post }) {
+  const canUpload = cloudinaryReady();
   return (
     <div className="grid-side">
       <div style={{ display: 'grid', gap: 16 }}>
@@ -37,9 +39,21 @@ export function PostFields({ post }: { post?: Post }) {
         <ImageField name="image" label="Photograph" current={post?.image_url} hint="Optional. Shown at the top of the notice and in the list." />
 
         <div className="field">
-          <label htmlFor="attachment_url">Attachment link</label>
-          <input id="attachment_url" name="attachment_url" type="url" defaultValue={post?.attachment_url ?? ''} placeholder="https://…" />
-          <p className="help">Optional — a link to a PDF, a form or a booking page.</p>
+          <label htmlFor="attachment">Attachment</label>
+          <input id="attachment" name="attachment" type="file" accept=".pdf,.docx,.xlsx,.pptx" disabled={!canUpload} />
+          <p className="help">
+            {canUpload ? 'Optional. PDF, Word, Excel or PowerPoint, up to 8 MB.' : 'Cloudinary must be configured to upload attachments.'}
+          </p>
+          {post?.attachment_url ? (
+            <>
+              <p className="help"><a href={post.attachment_url} target="_blank" rel="noreferrer">Open current attachment</a></p>
+              <div className="check-row">
+                <input id="remove_attachment" name="remove_attachment" type="checkbox" value="1" />
+                <label htmlFor="remove_attachment">Remove current attachment</label>
+              </div>
+              <p className="help">Choosing a new file replaces the current attachment.</p>
+            </>
+          ) : null}
         </div>
       </div>
 

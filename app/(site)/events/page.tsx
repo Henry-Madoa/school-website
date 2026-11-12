@@ -1,4 +1,6 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
+import { cdn } from '@/lib/cloudinary.ts';
 import type { Metadata } from 'next';
 import { getSettings, getUpcomingEvents, getPastEvents, getTerms } from '@/lib/site.ts';
 import { formatDate, formatDateShort, formatTime, dateParts, truncate } from '@/lib/format.ts';
@@ -26,7 +28,7 @@ export default async function EventsPage() {
       description: event.summary ?? undefined,
       startDate: event.starts_at,
       endDate: event.ends_at ?? undefined,
-      image: event.image_url ?? undefined,
+      image: cdn(event.image_url) || undefined,
       eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
       eventStatus: 'https://schema.org/EventScheduled',
       location: { '@type': 'Place', name: event.location ?? school.name, address: school.physical_address ?? undefined },
@@ -38,16 +40,14 @@ export default async function EventsPage() {
     <>
       {upcoming.length ? <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} /> : null}
 
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>What&rsquo;s on</div>
           <h1>What&rsquo;s on</h1>
           <p className="lead">
             Open days, parents&rsquo; evenings, fixtures, concerts and the dates the school closes.
             {nextTerm ? ` The next term opens on ${formatDate(nextTerm.start_date)}.` : ''}
           </p>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap">

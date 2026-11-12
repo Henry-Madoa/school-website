@@ -1,3 +1,4 @@
+import { Hero } from '../hero.tsx';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { search } from '@/lib/site.ts';
@@ -17,8 +18,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
 
   return (
     <>
-      <div className="page-head">
-        <div className="wrap">
+      <Hero>
           <div className="crumbs"><Link href="/">Home</Link><span aria-hidden="true">›</span>Search</div>
           <h1>Search</h1>
           <form className="form" method="get" action="/search" style={{ maxWidth: 560, marginTop: 20 }}>
@@ -28,8 +28,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <button type="submit" className="btn btn-primary">Search</button>
             </div>
           </form>
-        </div>
-      </div>
+      </Hero>
 
       <section className="section">
         <div className="wrap-narrow">
