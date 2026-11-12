@@ -90,6 +90,20 @@ export function findStockSchoolPhoto(url: string | null | undefined) {
   return legacyId ? byLegacyId.get(legacyId) : byUrl.get(url);
 }
 
+// Oasis's own photos (from its Facebook page, cropped and enhanced without changing what they
+// show), used for a level whose photograph is still demo stock.
+const oasisLevelImages: Record<string, string> = {
+  'pre-primary': `${cloudinary}/v1794492787/school-website/oasis-levels/pre-primary.jpg`,
+  'lower-primary': `${cloudinary}/v1794492788/school-website/oasis-levels/lower-primary.jpg`,
+  'upper-primary': `${cloudinary}/v1794492790/school-website/oasis-levels/upper-primary.jpg`,
+  'junior-school': `${cloudinary}/v1794492791/school-website/oasis-levels/junior-school.jpg`,
+};
+
+export function levelImage(level: { slug: string; image_url: string | null }): string | null {
+  if (level.image_url && !findStockSchoolPhoto(level.image_url)) return level.image_url;
+  return oasisLevelImages[level.slug] ?? level.image_url;
+}
+
 export function homepageHeroImage(configured: string | null | undefined): string {
   return configured && !findStockSchoolPhoto(configured) ? configured : schoolHeroImages[0];
 }

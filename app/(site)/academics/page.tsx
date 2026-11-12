@@ -5,6 +5,7 @@ import { getSettings, getLevels, getTerms } from '@/lib/site.ts';
 import { portalUrl } from '@/lib/urls.ts';
 import { formatDateShort } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
+import { levelImage } from '@/lib/school-photos.ts';
 import { Reveal } from '../site-chrome.tsx';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -44,9 +45,9 @@ export default async function AcademicsPage() {
             {levels.map((level, index) => (
               <Reveal key={level.id} delay={index * 60}>
                 <Link href={`/academics/${level.slug}`} className="media-card">
-                  {level.image_url ? (
+                  {levelImage(level) ? (
                     <div className="shot">
-                      <img src={cdn(level.image_url, { width: 800, height: 500 })} alt="" loading="lazy" />
+                      <img src={cdn(levelImage(level), { width: 800, height: 500 })} alt="" loading="lazy" />
                     </div>
                   ) : null}
                   <div className="body">

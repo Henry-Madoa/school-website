@@ -6,7 +6,7 @@ import {
 } from '@/lib/site.ts';
 import { formatDate, formatDateShort, dateParts, formatMoney, truncate, initials, telHref } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
-import { homepageHeroImage } from '@/lib/school-photos.ts';
+import { homepageHeroImage, levelImage } from '@/lib/school-photos.ts';
 import { portalUrl, siteUrl } from '@/lib/urls.ts';
 import { EnquiryForm } from './forms.tsx';
 import { Reveal, CountUp } from './site-chrome.tsx';
@@ -189,8 +189,8 @@ export default async function HomePage() {
               <Reveal key={level.id} delay={index * 60}>
                 <Link href={`/academics/${level.slug}`} className="media-card">
                   <div className="shot">
-                    {level.image_url ? (
-                      <img src={cdn(level.image_url, { width: 640, height: 400 })} alt="" loading="lazy" />
+                    {levelImage(level) ? (
+                      <img src={cdn(levelImage(level), { width: 640, height: 400 })} alt="" loading="lazy" />
                     ) : null}
                   </div>
                   <div className="body">

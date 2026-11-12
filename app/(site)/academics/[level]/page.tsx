@@ -5,6 +5,7 @@ import type { Metadata } from 'next';
 import { getSettings, getLevels, getLevel, getFees, getGrades } from '@/lib/site.ts';
 import { formatMoney } from '@/lib/format.ts';
 import { cdn } from '@/lib/cloudinary.ts';
+import { levelImage } from '@/lib/school-photos.ts';
 import { EnquiryForm } from '../../forms.tsx';
 
 type Params = { params: Promise<{ level: string }> };
@@ -54,9 +55,9 @@ export default async function LevelPage({ params }: Params) {
       <section className="section">
         <div className="wrap split">
           <div>
-            {level.image_url ? (
+            {levelImage(level) ? (
               <div style={{ borderRadius: 'var(--r-lg)', overflow: 'hidden', marginBottom: 28 }}>
-                <img src={cdn(level.image_url, { width: 1100, height: 620 })} alt="" style={{ width: '100%', display: 'block' }} />
+                <img src={cdn(levelImage(level), { width: 1100, height: 620 })} alt="" style={{ width: '100%', display: 'block' }} />
               </div>
             ) : null}
 
