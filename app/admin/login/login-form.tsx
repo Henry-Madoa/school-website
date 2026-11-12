@@ -70,10 +70,7 @@ export function LoginForm({ next }: { next: string }) {
         {busy ? 'Signing in…' : 'Sign in'}
       </button>
 
-      <p className="login-help">
-        Forgotten your password? An administrator can reset it for you — this site deliberately has no self-service
-        reset, because an email inbox is not proof of anything.
-      </p>
+      <p className="login-help">Forgotten your password? Ask an administrator to reset it.</p>
     </form>
   );
 }
